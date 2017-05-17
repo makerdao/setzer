@@ -1,0 +1,20 @@
+#/usr/bin/env bash
+### setzer-price -- get ether price in USD from coinmarketcap
+### Usage: setzer price [<options>] <receiver> <sig> [<args>]
+###    or: setzer price [<options>] <receiver> <data>
+###
+### Perform a local call to <receiver> without publishing a transaction.
+###
+### With <sig> of the form `<name>(<types>)', infer <data> from <sig>/<args>.
+### With `name(<in-types>)(<out-types>)', also decode the return values.
+###
+### With `-B <block>', use the state of the blockchain as of <block>.
+### With `-F <sender>', simulate calling <receiver> from <sender>
+### With `-V <value>', simulate transferring <value> to <receiver>.
+###
+### See also seth-send(1), seth-estimate(1), seth-storage(1), seth-code(1).
+set -e
+
+json=$(curl -sS "https://api.coinmarketcap.com/v1/ticker/ethereum/")
+price=$(jshon <<<"$json" -e 0 -e price_usd -u)
+echo $price

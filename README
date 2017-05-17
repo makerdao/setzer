@@ -1,0 +1,27 @@
+NAME
+   setzer -- manipulate feeds
+
+SYNOPSIS
+   setzer [<options>] <command> [<args>]
+   setzer <command> --help
+
+INSTALLATION
+   make link       install setzer(1) into /usr/local
+   make unlink     uninstall setzer(1) from /usr/local
+
+DEPENDENCIES
+   seth(1)         https://github.com/dapphub/seth
+   curl(1)         https://curl.haxx.se/
+   jshon(1)        https://github.com/mbrock/jshon/
+
+COMMANDS
+   help            print help about setzer(1) or one of its subcommands
+   price           print ether price in USD from Coinmarketcap
+   read            print formatted value of a feed
+   update          
+
+OPTIONS
+   -F, --from=<sender>        account to send transaction from
+   -G, --gas=<number>         number of units of gas to provide
+
+Report bugs to <https://github.com/makerdao/setzer/issues>.

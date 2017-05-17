@@ -1,0 +1,69 @@
+#/usr/bin/env bash
+### setzer -- manipulate feeds
+### Usage: setzer [<options>] <command> [<args>]
+###    or: setzer <command> --help
+###
+### Manipulate feeds and update data
+###
+### Connection options:
+###
+###    --rpc-host=<host>          JSON-RPC host (default: `localhost')
+###    --rpc-port=<port>          JSON-RPC port (default: `8545')
+###
+### Transaction options:
+###
+###    -F, --from=<sender>        account to send transaction from
+###    -G, --gas=<number>         number of gas units to provide
+###        --gas-price=<number>   price (in wei) of each gas unit
+###        --nonce=<number>       nonce value to use for the transaction
+###    -V, --value=<number>       amount (in wei) of ETH to send
+###
+### Options for setzer-call(1):
+###
+###    -B, --block=<number>       block number (default: `latest')
+###
+### Options for setzer-send(1):
+###
+###    --create                   use the calldata to create a new object
+###    --guess                    guess the return value of the call
+###
+### Other options:
+###
+###    --async                    do not wait for transaction receipt
+###    --follow                   go into a loop watching for new logs
+###    --json                     print output as JSON (if applicable)
+
+OPTS="setzer [<options>] <command> [<args>]
+setzer <command> --help
+--
+  Options
+S,spread=number      minimum spread needed to change value
+F,from=address       account from which to send transaction
+G,gas=number         amount of gas to provide with transaction
+"
+
+set -e
+
+if [[ $2 = --help ]]; then
+  exec "${0##*/}" help -- "$1"
+elif [[ $1 = -* ]] && which "${0##*/}-$1" &>/dev/null; then
+  exec "${0##*/}-$1" "${@:2}"
+fi
+
+eval "$(git rev-parse --parseopt -- "$@" <<<"$OPTS" || echo exit $?)"
+
+while [[ $1 ]]; do
+  case $1 in
+    --)              shift; break;;
+    
+    # -S|--source)     shift; export SOURCE=$1;;
+    -S|--spread)     shift; export SPREAD=$1;;
+
+    -F|--from)       shift; export ETH_FROM=$1;;
+    -G|--gas)        shift; export ETH_GAS=$1;;
+
+    *) printf "${0##*/}: internal error: %q\n" "$1"; exit 1
+  esac; shift
+done
+
+"${0##*/}-${1-help}" "${@:2}"

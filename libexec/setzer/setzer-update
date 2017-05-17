@@ -1,0 +1,32 @@
+#/usr/bin/env bash
+### setzer-update -- get ether price and update dsvalue
+### Usage: setzer update [<options>] <receiver> <sig> [<args>]
+###    or: setzer update [<options>] <receiver> <data>
+###
+### Perform a local call to <receiver> without publishing a transaction.
+###
+### With <sig> of the form `<name>(<types>)', infer <data> from <sig>/<args>.
+### With `name(<in-types>)(<out-types>)', also decode the return values.
+###
+### With `-B <block>', use the state of the blockchain as of <block>.
+### With `-F <sender>', simulate calling <receiver> from <sender>
+### With `-V <value>', simulate transferring <value> to <receiver>.
+###
+### See also seth-send(1), seth-estimate(1), seth-storage(1), seth-code(1).
+set -e
+[[ $1 ]] || setzer --bad-usage "$0"
+DSVALUE=$(seth --to-address "$1")
+
+[[ $SPREAD ]] || SPREAD=1
+[[ $ETH_GAS ]] || export ETH_GAS=200000
+
+# echo $(bc<<<"scale=4; $SPREAD / 100")
+
+price=$(setzer price)
+
+now=$(setzer read "$1")
+echo $now
+
+# check if now is outside change spread
+
+seth send $DSVALUE "poke(bytes32)" $(seth --to-uint256 $(seth --to-wei "$price" ETH))
