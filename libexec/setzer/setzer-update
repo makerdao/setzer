@@ -24,7 +24,7 @@ DSVALUE=$(seth --to-address "$1")
 
 price=$(setzer price)
 
-now=$(setzer read "$1")
+now=$(setzer peek "$1")
 echo $now
 
 # check if now is outside change spread
