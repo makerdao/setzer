@@ -1,4 +1,4 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
 ### setzer-price -- get ether price in USD from coinmarketcap
 ### Usage: setzer price [<options>] <receiver> <sig> [<args>]
 ###    or: setzer price [<options>] <receiver> <data>

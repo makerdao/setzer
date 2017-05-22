@@ -1,4 +1,4 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
 ### setzer-poke -- update a dsvalue, dscache or medianizer
 ### Usage: setzer poke [<options>] <receiver> <sig> [<args>]
 ###    or: setzer poke [<options>] <receiver> <data>

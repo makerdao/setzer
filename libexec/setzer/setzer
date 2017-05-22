@@ -1,4 +1,4 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
 ### setzer -- manipulate feeds
 ### Usage: setzer [<options>] <command> [<args>]
 ###    or: setzer <command> --help

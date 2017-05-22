@@ -1,4 +1,4 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
 ### setzer-update -- get ether price and update dsvalue
 ### Usage: setzer update [<options>] <receiver> <sig> [<args>]
 ###    or: setzer update [<options>] <receiver> <data>

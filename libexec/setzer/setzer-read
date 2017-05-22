@@ -1,4 +1,4 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
 ### setzer-read -- read dsvalue
 ### Usage: setzer read [<options>] <receiver> <sig> [<args>]
 ###    or: setzer read [<options>] <receiver> <data>
