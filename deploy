@@ -1,0 +1,38 @@
+#/usr/bin/env bash
+set -e
+
+export SOLC_FLAGS=--optimize
+
+export ETH_FROM=$(seth coinbase)
+export ETH_GAS=4200000
+
+cd /home/nanexcool/maker/medianizer
+
+dapp build
+
+export SETH_ASYNC=yes
+
+DSVALUEtx=$(dapp create DSValue)
+MEDIANIZERtx=$(dapp create Medianizer)
+
+export SETH_ASYNC=no
+
+DSVALUE=$(seth receipt $DSVALUEtx contractAddress)
+MEDIANIZER=$(seth receipt $MEDIANIZERtx contractAddress)
+
+seth send $MEDIANIZER "set(address)" $DSVALUE
+
+setzer update $DSVALUE
+
+seth send $MEDIANIZER "poke()"
+
+cd /home/nanexcool/maker/setzer
+
+cat > load-env << EOF
+#!/usr/bin/env bash
+
+# medianizer deployment on $(seth chain) from $(git rev-parse HEAD)
+
+export DSVALUE=$DSVALUE
+export MEDIANIZER=$MEDIANIZER
+EOF

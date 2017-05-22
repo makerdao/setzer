@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# medianizer deployment on unknown from 6d6a5cecc821883408b5746ae5c70da211c3ecad
+
+export DSVALUE=0xe982e462b094850f12af94d21d470e21be9d0e9c
+export MEDIANIZER=0x59d3631c86bbe35ef041872d502f218a39fba150

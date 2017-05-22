@@ -1,0 +1,12 @@
+#/usr/bin/env bash
+set -e
+
+export ETH_FROM=$(seth coinbase)
+export ETH_GAS=200000
+
+export DSVALUE=0x8e696c2fbeec00828e33464ce75053636c149bd2
+export MEDIANIZER=0x729d19f657bd0614b4985cf1d82531c67569197b
+
+setzer update $DSVALUE
+
+medianizer poke $MEDIANIZER

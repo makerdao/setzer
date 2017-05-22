@@ -1,7 +1,7 @@
 #/usr/bin/env bash
-### setzer-update -- get ether price and update dsvalue
-### Usage: setzer update [<options>] <receiver> <sig> [<args>]
-###    or: setzer update [<options>] <receiver> <data>
+### setzer-poke -- update a dsvalue, dscache or medianizer
+### Usage: setzer poke [<options>] <receiver> <sig> [<args>]
+###    or: setzer poke [<options>] <receiver> <data>
 ###
 ### Perform a local call to <receiver> without publishing a transaction.
 ###
@@ -16,17 +16,4 @@
 set -e
 [[ $1 ]] || setzer --bad-usage "$0"
 DSVALUE=$(seth --to-address "$1")
-
-[[ $SPREAD ]] || SPREAD=1
-[[ $ETH_GAS ]] || export ETH_GAS=200000
-
-# echo $(bc<<<"scale=4; $SPREAD / 100")
-
-price=$(setzer price cryptocompare)
-
-now=$(setzer peek "$1")
-echo $now
-
-# check if now is outside change spread
-
-seth send $DSVALUE "poke(bytes32)" $(seth --to-uint256 $(seth --to-wei "$price" ETH))
+echo $(seth send "$DSVALUE" "poke()")
