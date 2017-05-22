@@ -3,14 +3,10 @@
 ### Usage: setzer update [<options>] <receiver> <sig> [<args>]
 ###    or: setzer update [<options>] <receiver> <data>
 ###
-### Perform a local call to <receiver> without publishing a transaction.
+### get ether price and update dsvalue
 ###
 ### With <sig> of the form `<name>(<types>)', infer <data> from <sig>/<args>.
 ### With `name(<in-types>)(<out-types>)', also decode the return values.
-###
-### With `-B <block>', use the state of the blockchain as of <block>.
-### With `-F <sender>', simulate calling <receiver> from <sender>
-### With `-V <value>', simulate transferring <value> to <receiver>.
 ###
 ### See also seth-send(1), seth-estimate(1), seth-storage(1), seth-code(1).
 set -e
@@ -22,11 +18,21 @@ DSVALUE=$(seth --to-address "$1")
 
 # echo $(bc<<<"scale=4; $SPREAD / 100")
 
-price=$(setzer price cryptocompare)
+new=$(setzer price cryptocompare)
 
-now=$(setzer peek "$1")
-echo $now
+old=$(setzer peek "$1")
+old=$(seth --to-fix 18 $(seth --to-dec "$old"))
+echo Old: $old
+echo New: $new
 
-# check if now is outside change spread
+testforzero=$(bc <<< "${old} == 0")
+if [[ ${testforzero} -eq 0 ]]; then
+    swing=$(bc <<< "scale=10;(${new} - ${old}) / ${old} * 100")
+    test=$(bc <<< "${swing#-} >= ${SPREAD}")
+    if [[ ${test} -eq 0 ]]; then
+        echo 'nothing to do'
+        exit;
+    fi
+fi
 
-seth send $DSVALUE "poke(bytes32)" $(seth --to-uint256 $(seth --to-wei "$price" ETH))
+seth send $DSVALUE "poke(bytes32)" $(seth --to-uint256 $(seth --to-wei "$new" ETH))

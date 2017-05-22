@@ -36,6 +36,10 @@
 OPTS="setzer [<options>] <command> [<args>]
 setzer <command> --help
 --
+  Connection options:
+rpc-host=host        JSON-RPC host (default: \`localhost')
+rpc-port=port        JSON-RPC port (default: \`8545')
+
   Options
 S,spread=number      minimum spread needed to change value
 F,from=address       account from which to send transaction
@@ -55,7 +59,9 @@ eval "$(git rev-parse --parseopt -- "$@" <<<"$OPTS" || echo exit $?)"
 while [[ $1 ]]; do
   case $1 in
     --)              shift; break;;
-    
+
+    --rpc-host)      shift; export ETH_RPC_HOST=$1;;
+    --rpc-port)      shift; export ETH_RPC_PORT=$1;;
     # -S|--source)     shift; export SOURCE=$1;;
     -S|--spread)     shift; export SPREAD=$1;;
 

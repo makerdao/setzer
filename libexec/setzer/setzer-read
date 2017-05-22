@@ -18,4 +18,4 @@ set -e
 DSVALUE=$(seth --to-address "$1")
 
 now=$(seth call "$DSVALUE" "read()(bytes32)")
-seth --to-fix 18 $(seth --to-dec $now)
+seth --to-fix 18 $(seth --to-dec "$now")

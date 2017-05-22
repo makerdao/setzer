@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+### setzer-price-ls -- list all prices
+### Usage: setzer price ls
+set -e
+cryptocompare=$(setzer price cryptocompare)
+coinmarketcap=$(setzer price coinmarketcap)
+echo CryptoCompare:  $cryptocompare
+echo CoinMarketCap:  $coinmarketcap
