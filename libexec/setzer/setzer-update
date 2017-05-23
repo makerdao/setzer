@@ -31,7 +31,7 @@ if [[ ${testforzero} -eq 0 ]]; then
     test=$(bc <<< "${swing#-} >= ${SPREAD}")
     if [[ ${test} -eq 0 ]]; then
         echo 'nothing to do'
-        exit;
+        exit 1;
     fi
 fi
 
