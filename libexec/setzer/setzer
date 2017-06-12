@@ -14,24 +14,7 @@
 ###
 ###    -F, --from=<sender>        account to send transaction from
 ###    -G, --gas=<number>         number of gas units to provide
-###        --gas-price=<number>   price (in wei) of each gas unit
-###        --nonce=<number>       nonce value to use for the transaction
-###    -V, --value=<number>       amount (in wei) of ETH to send
-###
-### Options for setzer-call(1):
-###
-###    -B, --block=<number>       block number (default: `latest')
-###
-### Options for setzer-send(1):
-###
-###    --create                   use the calldata to create a new object
-###    --guess                    guess the return value of the call
-###
-### Other options:
-###
-###    --async                    do not wait for transaction receipt
-###    --follow                   go into a loop watching for new logs
-###    --json                     print output as JSON (if applicable)
+###    -S, --spread=<number>      minimum spread needed to change value
 
 OPTS="setzer [<options>] <command> [<args>]
 setzer <command> --help
@@ -62,7 +45,7 @@ while [[ $1 ]]; do
 
     --rpc-host)      shift; export ETH_RPC_HOST=$1;;
     --rpc-port)      shift; export ETH_RPC_PORT=$1;;
-    # -S|--source)     shift; export SOURCE=$1;;
+
     -S|--spread)     shift; export SPREAD=$1;;
 
     -F|--from)       shift; export ETH_FROM=$1;;

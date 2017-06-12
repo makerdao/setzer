@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -e
+
+LOCKDIR="/tmp/update_mainnet"
+
+#Remove the lock directory
+function cleanup {
+    if rmdir $LOCKDIR; then
+        echo "Finished"
+    else
+        echo "Failed to remove lock directory '$LOCKDIR'"
+        exit 1
+    fi
+}
+
+if mkdir $LOCKDIR; then
+    #Ensure that if we "grabbed a lock", we release it
+    #Works for SIGTERM and SIGINT(Ctrl-C)
+    trap "cleanup" EXIT
+
+    echo "Acquired lock, running"
+
+    # Processing starts here
+    export ETH_RPC_PORT=8545
+    export ETH_FROM=$(seth coinbase)
+    export ETH_GAS=200000
+
+    if [ $(seth chain) == "ethlive" ]; then
+        export DSVALUE="0x8e696c2fbeec00828e33464ce75053636c149bd2"
+        export MEDIANIZER="0x729d19f657bd0614b4985cf1d82531c67569197b"
+    elif [ $(seth chain) == "kovan" ]; then
+        export DSVALUE="0xadb0257f886f022e2865a9bd02dedeceeb6a2911"
+        export MEDIANIZER="0xd5fb49fde313db2deeddc90374772468eb44b973"
+    else
+    exit
+    fi
+
+    setzer poke $MEDIANIZER
+else
+    echo "Could not create lock directory '$LOCKDIR'"
+    exit 1
+fi

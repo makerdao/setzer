@@ -4,13 +4,9 @@
 ###    or: setzer update [<options>] <receiver> <data>
 ###
 ### get ether price and update dsvalue
-###
-### With <sig> of the form `<name>(<types>)', infer <data> from <sig>/<args>.
-### With `name(<in-types>)(<out-types>)', also decode the return values.
-###
-### See also seth-send(1), seth-estimate(1), seth-storage(1), seth-code(1).
 set -e
 [[ $1 ]] || setzer --bad-usage "$0"
+[[ $2 ]] || setzer --bad-usage "$0"
 DSVALUE=$(seth --to-address "$1")
 
 [[ $SPREAD ]] || SPREAD=1
@@ -18,16 +14,20 @@ DSVALUE=$(seth --to-address "$1")
 
 # echo $(bc<<<"scale=4; $SPREAD / 100")
 
-new=$(setzer price cryptocompare)
-
 old=$(setzer peek "$1")
 old=$(seth --to-fix 18 $(seth --to-dec "$old"))
+
+new=$(setzer price "$2")
+
+date
 echo Old: $old
 echo New: $new
 
 testforzero=$(bc <<< "${old} == 0")
+
 if [[ ${testforzero} -eq 0 ]]; then
     swing=$(bc <<< "scale=10;(${new} - ${old}) / ${old} * 100")
+    echo Swing: $swing
     test=$(bc <<< "${swing#-} >= ${SPREAD}")
     if [[ ${test} -eq 0 ]]; then
         echo 'nothing to do'
