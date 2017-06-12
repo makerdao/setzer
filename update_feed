@@ -37,7 +37,6 @@ if mkdir $LOCKDIR; then
 
     setzer update $DSVALUE cryptocompare
 
-    setzer poke $MEDIANIZER
 else
     echo "Could not create lock directory '$LOCKDIR'"
     exit 1

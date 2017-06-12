@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-LOCKDIR="/tmp/update_mainnet"
+LOCKDIR="/tmp/update_medianizer"
 
 #Remove the lock directory
 function cleanup {
@@ -21,7 +21,7 @@ if mkdir $LOCKDIR; then
     echo "Acquired lock, running"
 
     # Processing starts here
-    export ETH_RPC_PORT=8545
+    export ETH_RPC_PORT=8546
     export ETH_FROM=$(seth coinbase)
     export ETH_GAS=200000
 
@@ -35,7 +35,18 @@ if mkdir $LOCKDIR; then
     exit
     fi
 
-    setzer poke $MEDIANIZER
+    current=$(setzer peek $MEDIANIZER)
+    computed=($(setzer compute $MEDIANIZER))
+    
+    echo Old value: $current
+    echo New value: $computed
+
+    if [ "$current" == "$computed" ]; then
+        echo "Nothing to do"
+    else
+        #echo "Updating"
+        setzer poke $MEDIANIZER
+    fi
 else
     echo "Could not create lock directory '$LOCKDIR'"
     exit 1
