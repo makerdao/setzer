@@ -38,8 +38,8 @@ if mkdir $LOCKDIR; then
     current=$(setzer peek $MEDIANIZER)
     computed=($(setzer compute $MEDIANIZER))
     
-    echo Old value: $current
-    echo New value: $computed
+    echo Old value: $(seth --to-fix 18 $(seth --to-dec "$current"))
+    echo New value: $(seth --to-fix 18 $(seth --to-dec "$computed"))
 
     if [ "$current" == "$computed" ]; then
         echo "Nothing to do"
