@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+### setzer-expires -- update a ds-cache
+### Usage: setzer expires <target>
+###
+### Update <target> with <value> and <timestamp> expiration
+set -e
+[[ $# = 1 ]] || setzer --bad-usage "$0"
+zzz=$(seth call "$1" "zzz()(uint256)")
+zzz=$(seth --to-dec "$zzz")
+now=$(date +%s)
+echo $(expr $zzz - $now)

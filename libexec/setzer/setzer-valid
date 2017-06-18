@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+### setzer-valid -- 
+### Usage: setzer valid <target>
+###
+### Returns true if <target> is valid, <false> otherwise
+set -e
+[[ $# = 1 ]] || setzer --bad-usage "$0"
+valid=($(setzer peek "$1"))
+echo ${valid[1]}

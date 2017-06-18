@@ -17,7 +17,7 @@ set -e
 [[ $1 ]] || setzer --bad-usage "$0"
 DSVALUE=$(seth --to-address "$1")
 
-now=($(seth call "$DSVALUE" "peek()(bytes32,bool)"))
-echo ${now[0]}
+now=$(seth call "$DSVALUE" "peek()(bytes32,bool)")
+echo $now
 #echo ${now[1]}
 #seth --to-fix 18 $(seth --to-dec $now)

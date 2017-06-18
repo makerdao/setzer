@@ -5,6 +5,6 @@ set -e
 cryptocompare=$(setzer price cryptocompare)
 coinmarketcap=$(setzer price coinmarketcap)
 coinbase=$(setzer price coinbase)
-echo CryptoCompare:  $cryptocompare
-echo CoinMarketCap:  $coinmarketcap
-echo Coinbase:       $coinbase
+echo "CryptoCompare:  $cryptocompare"
+echo "CoinMarketCap:  $coinmarketcap"
+echo "Coinbase:       $coinbase"

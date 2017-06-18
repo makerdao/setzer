@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+### setzer-spread -- get ether price and spread dsvalue
+### Usage: setzer spread [<options>] <receiver> <sig> [<args>]
+###
+### get ether price and update dsvalue
+set -e
+[[ $# = 2 ]] || setzer --bad-usage "$0"
+
+old=$1
+new=$2
+
+testforzero=$(bc <<< "${new} == 0")
+
+if [[ ${testforzero} -eq 0 ]]; then
+    swing=$(bc <<< "scale=10;(${new} - ${old}) / ${old} * 100")
+    echo ${swing#-}
+    exit
+fi
+
+echo 9999
