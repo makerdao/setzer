@@ -13,7 +13,7 @@ testforzero=$(bc <<< "${new} == 0")
 
 if [[ ${testforzero} -eq 0 ]]; then
     swing=$(bc <<< "scale=10;(${new} - ${old}) / ${old} * 100")
-    echo ${swing#-}
+    echo $swing
     exit
 fi
 
