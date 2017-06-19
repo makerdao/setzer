@@ -52,7 +52,7 @@ if mkdir $LOCKDIR; then
         echo "Spread larger than $SPREAD, will update."
     fi
 
-    until=$(date +%s -d'+1 hour')
+    until=$(date +%s -d'+3 hour')
 
     if [ $needsupdate == true ]; then
         setzer poker $POKER $MEDIANIZER "$new" "$until"
