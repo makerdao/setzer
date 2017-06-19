@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -e
+
+LOCKDIR="/tmp/update_kovan"
+
+#Remove the lock directory
+function cleanup {
+    if rmdir $LOCKDIR; then
+        echo "Finished"
+    else
+        echo "Failed to remove lock directory '$LOCKDIR'"
+        exit 1
+    fi
+}
+
+if mkdir $LOCKDIR; then
+    #Ensure that if we "grabbed a lock", we release it
+    #Works for SIGTERM and SIGINT(Ctrl-C)
+    trap "cleanup" EXIT
+
+    echo `date` "Acquired lock, running"
+
+    # Processing starts here
+    export ETH_RPC_PORT=8545
+    export ETH_FROM=$(seth rpc eth_coinbase)
+    export ETH_GAS=200000
+    export SPREAD=1
+
+    export POKER="0xfDcD34ED730a5576264700401e81B4Bc493a82c3"
+    export MEDIANIZER="0xd5Fb49fdE313db2DeedDc90374772468EB44b973"
+
+    needsupdate=false
+    expires=$(setzer expires "$POKER")
+    if [ "$expires" -lt 300 ]; then
+        echo "Will expire in less than 5 minutes, updating"
+        needsupdate=true
+    fi
+
+    old=$(setzer peek "$POKER")
+    new=$(setzer price cryptocompare)
+    spread=$(setzer spread "$old" "$new")
+    echo $spread
+    
+    test=$(bc <<< "${spread#-} >= ${SPREAD}")
+    if [[ ${test} -ne 0 ]]; then
+        needsupdate=true
+    fi
+
+    until=$(date +%s -d'+1 hour')
+
+    if [ $needsupdate == true ]; then
+        setzer poker $POKER $MEDIANIZER "$new" "$until"
+    fi
+
+else
+    echo "Could not create lock directory '$LOCKDIR'"
+    exit 1
+fi

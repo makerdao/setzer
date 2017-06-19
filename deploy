@@ -20,11 +20,11 @@ export SETH_ASYNC=no
 DSVALUE=$(seth receipt $DSVALUEtx contractAddress)
 MEDIANIZER=$(seth receipt $MEDIANIZERtx contractAddress)
 
-seth send $MEDIANIZER "set(address)" $DSVALUE
+setzer set $MEDIANIZER $DSVALUE
 
 setzer update $DSVALUE
 
-seth send $MEDIANIZER "poke()"
+setzer poke $MEDIANIZER
 
 cd /home/nanexcool/maker/setzer
 

@@ -3,5 +3,4 @@
 ### Usage: setzer compute <medianizer>
 set -e
 [[ $1 ]] || setzer --bad-usage "$0"
-sig="compute()(bytes32,bool)"
-echo $(seth call "$1" "$sig")
+seth call "$1" "compute()(bytes32,bool)"

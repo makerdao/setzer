@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+set -e
+
+LOCKDIR="/tmp/update_mainnet"
+
+#Remove the lock directory
+function cleanup {
+    if rmdir $LOCKDIR; then
+        echo "Finished"
+    else
+        echo "Failed to remove lock directory '$LOCKDIR'"
+        exit 1
+    fi
+}
+
+if mkdir $LOCKDIR; then
+    #Ensure that if we "grabbed a lock", we release it
+    #Works for SIGTERM and SIGINT(Ctrl-C)
+    trap "cleanup" EXIT
+
+    echo `date` "Acquired lock, running"
+
+    # Processing starts here
+    export ETH_RPC_PORT=8546
+    export ETH_FROM=$(seth rpc eth_coinbase)
+    export ETH_GAS=200000
+    
+    export POKER="0x82e727D640826cFbE0364d52481d79d6821FA39b"
+    export MEDIANIZER="0x729d19f657bd0614b4985cf1d82531c67569197b"
+
+    export SOURCE="cryptocompare"
+    export SPREAD=1
+
+    needsupdate=false
+    expires=$(setzer expires "$POKER")
+    echo "Expires in $expires seconds."
+    if [ "$expires" -lt 300 ]; then
+        echo "Expires in less than 5 minutes, will update."
+        needsupdate=true
+    fi
+
+    old=$(setzer peek "$POKER")
+    new=$(setzer price "$SOURCE")
+    spread=$(setzer spread "$old" "$new")
+    echo "Old:    " $old
+    echo "New:    " $new
+    echo "Spread: " $spread
+    
+    test=$(bc <<< "${spread#-} >= ${SPREAD}")
+    if [[ ${test} -ne 0 ]]; then
+        needsupdate=true
+        echo "Spread larger than $SPREAD, will update."
+    fi
+
+    until=$(date +%s -d'+1 hour')
+
+    if [ $needsupdate == true ]; then
+        setzer poker $POKER $MEDIANIZER "$new" "$until"
+    fi
+
+else
+    echo "Could not create lock directory '$LOCKDIR'"
+    exit 1
+fi
