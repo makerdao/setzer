@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+### setzer-price -- get ether price in USD from gdax
+### Usage: setzer price gdax
+set -e
+
+json=$(curl -sS "https://api.gdax.com/products/ETH-USD/ticker")
+price=$(jshon <<<"$json" -e price -u)
+echo $price

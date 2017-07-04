@@ -24,29 +24,35 @@ if mkdir $LOCKDIR; then
     export ETH_RPC_PORT=8545
     export ETH_FROM=$(seth rpc eth_coinbase)
     export ETH_GAS=200000
-    export SPREAD=1
-
+    
     export POKER="0xfDcD34ED730a5576264700401e81B4Bc493a82c3"
     export MEDIANIZER="0xd5Fb49fdE313db2DeedDc90374772468EB44b973"
 
+    export SOURCE="cryptocompare"
+    export SPREAD=1
+
     needsupdate=false
     expires=$(setzer expires "$POKER")
+    echo "Expires in $expires seconds."
     if [ "$expires" -lt 300 ]; then
-        echo "Will expire in less than 5 minutes, updating"
+        echo "Expires in less than 5 minutes, will update."
         needsupdate=true
     fi
 
     old=$(setzer peek "$POKER")
-    new=$(setzer price cryptocompare)
+    new=$(setzer price "$SOURCE")
     spread=$(setzer spread "$old" "$new")
-    echo $spread
+    echo "Old:    " $old
+    echo "New:    " $new
+    echo "Spread: " $spread
     
     test=$(bc <<< "${spread#-} >= ${SPREAD}")
     if [[ ${test} -ne 0 ]]; then
         needsupdate=true
+        echo "Spread larger than $SPREAD, will update."
     fi
 
-    until=$(date +%s -d'+1 hour')
+    until=$(date +%s -d'+24 hour')
 
     if [ $needsupdate == true ]; then
         setzer poker $POKER $MEDIANIZER "$new" "$until"
