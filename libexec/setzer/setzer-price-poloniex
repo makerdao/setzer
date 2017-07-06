@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -eu -o pipefail -- ${*^^}
+fail() { echo >&2 "${0##*/}: error: $*"; exit 1; }
+
+trap 'fail "$url"' ERR
+url="https://poloniex.com/public?command=returnTicker"
+json=$(curl -fsSL "$url")
+
+if [[ $# = 0 ]]; then
+  echo "Usage: ${0##*/} <currency-pair>..."
+  echo
+  echo Currency pairs:
+  echo
+  jshon -k <<<"$json" | sort | sed -e s,_,/, -e "s/^/   /"
+  exit 1
+fi
+
+for pair; do
+  [[ $pair = */* ]] || fail "bad pair: $pair"
+  pair=${pair^^} base=${pair%/*} quote=${pair#*/}
+
+  trap 'fail "pair not found: $pair"' ERR
+  pair_json=$(jshon -Q -e ${base}_${quote} <<<"$json")
+
+  trap 'fail "unexpected: $json"' ERR
+  price=$(jshon <<<"$pair_json" -Q -e last -u)
+  volume=$(jshon <<<"$pair_json" -Q -e quoteVolume -u)
+  echo $pair $price $volume
+done

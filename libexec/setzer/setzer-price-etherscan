@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+### setzer-price -- get ether price in USD from etherscan
+### Usage: setzer price etherscan
+set -e
+
+json=$(curl -sS "https://api.etherscan.io/api?module=stats&action=ethprice&apikey=YourApiKeyToken")
+price=$(jshon <<<"$json" -e result -e ethusd -u)
+echo $price
