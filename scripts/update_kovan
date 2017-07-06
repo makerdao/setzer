@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
-
-LOCKDIR="/tmp/update_kovan"
+date=$(date +%s%N)
+LOCKDIR="/tmp/update_kovan-$date"
 
 #Remove the lock directory
 function cleanup {

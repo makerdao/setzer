@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
 set -e
-
-new=174.98765
-old=178.940001
-echo Old: $old
-echo New: $new
-swing=$(bc <<< "scale=10;(${new} - ${old}) / ${old} * 100")
-test=$(bc <<< "${swing#-} >= 1")
-if [[ ${test} -eq 1 ]]; then
-    echo 'YAY'
-fi
+date=$(date +%s%3N)
+echo $date
+LOCKDIR="/tmp/update_mainnet2"
+echo $LOCKDIR$date
+# new=174.98765
+# old=178.940001
+# echo Old: $old
+# echo New: $new
+# swing=$(bc <<< "scale=10;(${new} - ${old}) / ${old} * 100")
+# test=$(bc <<< "${swing#-} >= 1")
+# if [[ ${test} -eq 1 ]]; then
+#     echo 'YAY'
+# fi
 
 #seth send $DSVALUE "poke(bytes32)" $(seth --to-uint256 $(seth --to-wei "$price" ETH)) 

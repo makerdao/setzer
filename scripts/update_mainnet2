@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
-
-LOCKDIR="/tmp/update_mainnet2"
+date=$(date +%s%N)
+LOCKDIR="/tmp/update_mainnet-$date"
 
 #Remove the lock directory
 function cleanup {
