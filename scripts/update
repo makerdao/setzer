@@ -12,8 +12,7 @@ export SOURCE=$SOURCE
 export POKER=$POKER
 export MED=$MED
 
-date=$(date +%s%N)
-LOCKDIR="/tmp/update-$date"
+LOCKDIR="/tmp/update-$POKER"
 
 #Remove the lock directory
 function cleanup {
