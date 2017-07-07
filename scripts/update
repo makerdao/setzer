@@ -36,8 +36,8 @@ if mkdir $LOCKDIR; then
     needsupdate=false
     expires=$(setzer expires "$POKER")
     echo "Expires in $expires seconds."
-    if [ "$expires" -lt 300 ]; then
-        echo "Expires in less than 5 minutes, will update."
+    if [ "$expires" -lt 3600 ]; then
+        echo "Expires in less than an hour, will update."
         needsupdate=true
     fi
 
@@ -54,7 +54,7 @@ if mkdir $LOCKDIR; then
         echo "Spread larger than $SPREAD, will update."
     fi
 
-    until=$(date +%s -d'+3 hour')
+    until=$(date +%s -d'+4 hour')
 
     if [ $needsupdate == true ]; then
         setzer poker $POKER $MED "$new" "$until"
