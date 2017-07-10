@@ -7,8 +7,10 @@ coinmarketcap=$(setzer price coinmarketcap)
 coinbase=$(setzer price coinbase)
 etherscan=$(setzer price etherscan)
 gdax=$(setzer price gdax)
+kraken=$(setzer price kraken)
 echo "CryptoCompare:  $cryptocompare"
 echo "CoinMarketCap:  $coinmarketcap"
 echo "Coinbase:       $coinbase"
 echo "Etherscan:      $etherscan"
 echo "GDAX:           $gdax"
+echo "Kraken:         $kraken"
