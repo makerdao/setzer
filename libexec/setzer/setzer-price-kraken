@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-### setzer-price -- get ether price in USD from gdax
-### Usage: setzer price gdax
+### setzer-price -- get ether price in USD from kraken
+### Usage: setzer price kraken
 set -e
 
 json=$(curl -sS "https://api.kraken.com/0/public/Ticker?pair=ETHUSD")

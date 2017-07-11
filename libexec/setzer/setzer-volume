@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+# set -- "${1,,}"
+set -- "${1//\/}"
+exec "$0-$1"
