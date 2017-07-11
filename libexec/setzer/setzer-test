@@ -14,4 +14,4 @@ echo $LOCKDIR$date
 #     echo 'YAY'
 # fi
 
-#seth send $DSVALUE "poke(bytes32)" $(seth --to-uint256 $(seth --to-wei "$price" ETH)) 
+#seth send $DSVALUE "poke(bytes32)" $(seth --to-uint256 $(seth --to-wei "$price" ETH))
