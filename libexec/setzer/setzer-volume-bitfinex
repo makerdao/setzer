@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+### setzer-volume -- get ether volume in USD from bitfinex
+### Usage: setzer volume bitfinex
+set -e
+
+json=$(curl -sS "https://api.bitfinex.com/v1/pubticker/ethusd")
+volume=$(jshon <<<"$json" -e volume -u)
+echo $volume

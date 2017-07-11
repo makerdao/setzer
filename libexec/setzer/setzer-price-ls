@@ -2,15 +2,27 @@
 ### setzer-price-ls -- list all prices
 ### Usage: setzer price ls
 set -e
-cryptocompare=$(setzer price cryptocompare)
-coinmarketcap=$(setzer price coinmarketcap)
+bitfinex=$(setzer price bitfinex)
+bittrex=$(setzer price bittrex)
 coinbase=$(setzer price coinbase)
+coinmarketcap=$(setzer price coinmarketcap)
+cryptocompare=$(setzer price cryptocompare)
 etherscan=$(setzer price etherscan)
 gdax=$(setzer price gdax)
+gemini=$(setzer price gemini)
 kraken=$(setzer price kraken)
-echo "CryptoCompare:  $cryptocompare"
-echo "CoinMarketCap:  $coinmarketcap"
+livecoin=$(setzer price livecoin)
+poloniex=$(setzer price poloniex)
+yobit=$(setzer price yobit)
+echo "Bitfinex:       $bitfinex"
+echo "Bittrex:        $bittrex"
 echo "Coinbase:       $coinbase"
+echo "CoinMarketCap:  $coinmarketcap"
+echo "CryptoCompare:  $cryptocompare"
 echo "Etherscan:      $etherscan"
 echo "GDAX:           $gdax"
+echo "Gemini:         $gemini"
 echo "Kraken:         $kraken"
+echo "Livecoin:       $livecoin"
+echo "Poloniex:       $poloniex"
+echo "Yobit:          $yobit"

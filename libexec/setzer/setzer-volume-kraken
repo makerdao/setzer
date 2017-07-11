@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+### setzer-volume -- get ether volume in USD from kraken
+### Usage: setzer volume kraken
+set -e
+
+json=$(curl -sS "https://api.kraken.com/0/public/Ticker?pair=ETHUSD")
+volume=$(jshon <<<"$json" -e result -e XETHZUSD -e v -e 1 -u)
+echo $volume

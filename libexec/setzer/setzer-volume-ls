@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+### setzer-volume-ls -- list all volumes
+### Usage: setzer volume ls
+set -e
+bitfinex=$(setzer volume bitfinex)
+bittrex=$(setzer volume bittrex)
+gdax=$(setzer volume gdax)
+gemini=$(setzer volume gemini)
+kraken=$(setzer volume kraken)
+livecoin=$(setzer volume livecoin)
+poloniex=$(setzer volume poloniex)
+yobit=$(setzer volume yobit)
+echo "Bitfinex:       $bitfinex"
+echo "Bittrex:        $bittrex"
+echo "GDAX:           $gdax"
+echo "Gemini:         $gemini"
+echo "Kraken:         $kraken"
+echo "Livecoin:       $livecoin"
+echo "Poloniex:       $poloniex"
+echo "Yobit:          $yobit"
