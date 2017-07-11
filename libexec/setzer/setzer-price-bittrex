@@ -3,6 +3,6 @@
 ### Usage: setzer price bittrex
 set -e
 
-json=$(curl -sS "https://bittrex.com/api/v1.1/public/getticker?market=USDT-ETH")
-price=$(jshon <<<"$json" -Q -e result -Q -e Last -u)
+json=$(curl -sS "https://bittrex.com/api/v1.1/public/getmarketsummary?market=usdt-eth")
+price=$(jshon <<<"$json" -Q -e result -Q -e 0 -Q -e Last -u)
 echo $price

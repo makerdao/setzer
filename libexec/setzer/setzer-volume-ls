@@ -3,11 +3,13 @@
 ### Usage: setzer volume ls
 set -e
 bitfinex=$(setzer volume bitfinex)
+bittrex=$(setzer volume bittrex)
 gdax=$(setzer volume gdax)
 gemini=$(setzer volume gemini)
 kraken=$(setzer volume kraken)
 poloniex=$(setzer volume poloniex)
 echo "Bitfinex:       $bitfinex"
+echo "Bittrex:        $bittrex"
 echo "GDAX:           $gdax"
 echo "Gemini:         $gemini"
 echo "Kraken:         $kraken"
