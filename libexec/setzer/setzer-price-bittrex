@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+### setzer-price -- get ether price in USD from bittrex
+### Usage: setzer price bittrex
+set -e
+
+json=$(curl -sS "https://bittrex.com/api/v1.1/public/getticker?market=USDT-ETH")
+price=$(jshon <<<"$json" -Q -e result -Q -e Last -u)
+echo $price
