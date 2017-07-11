@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+### setzer-livecoin -- get ether price in USD from livecoin
+### Usage: setzer price livecoin
+set -e
+
+json=$(curl -sS "https://api.livecoin.net/exchange/ticker?currencyPair=ETH/USD")
+price=$(jshon <<<"$json" -e last -u)
+echo $price

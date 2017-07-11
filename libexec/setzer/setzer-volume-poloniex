@@ -4,5 +4,5 @@
 set -e
 
 json=$(curl -sS "https://poloniex.com/public?command=returnTicker")
-volume=$(jshon <<<"$json" -Q -e USDT_ETH -Q -e quoteVolume -u)
+volume=$(jshon <<<"$json" -e USDT_ETH -e quoteVolume -u)
 echo $volume

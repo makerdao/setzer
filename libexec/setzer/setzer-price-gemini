@@ -4,5 +4,5 @@
 set -e
 
 json=$(curl -sS "https://api.gemini.com/v1/pubticker/ethusd")
-price=$(jshon <<<"$json" -Q -e last -u)
+price=$(jshon <<<"$json" -e last -u)
 echo $price

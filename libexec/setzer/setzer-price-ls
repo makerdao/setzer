@@ -11,7 +11,9 @@ etherscan=$(setzer price etherscan)
 gdax=$(setzer price gdax)
 gemini=$(setzer price gemini)
 kraken=$(setzer price kraken)
+livecoin=$(setzer price livecoin)
 poloniex=$(setzer price poloniex)
+yobit=$(setzer price yobit)
 echo "Bitfinex:       $bitfinex"
 echo "Bittrex:        $bittrex"
 echo "Coinbase:       $coinbase"
@@ -21,4 +23,6 @@ echo "Etherscan:      $etherscan"
 echo "GDAX:           $gdax"
 echo "Gemini:         $gemini"
 echo "Kraken:         $kraken"
+echo "Livecoin:       $livecoin"
 echo "Poloniex:       $poloniex"
+echo "Yobit:          $yobit"

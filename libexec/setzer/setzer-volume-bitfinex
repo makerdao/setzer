@@ -4,5 +4,5 @@
 set -e
 
 json=$(curl -sS "https://api.bitfinex.com/v1/pubticker/ethusd")
-volume=$(jshon <<<"$json" -Q -e volume -u)
+volume=$(jshon <<<"$json" -e volume -u)
 echo $volume
