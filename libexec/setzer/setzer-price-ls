@@ -8,6 +8,7 @@ coinmarketcap=$(setzer price coinmarketcap)
 cryptocompare=$(setzer price cryptocompare)
 etherscan=$(setzer price etherscan)
 gdax=$(setzer price gdax)
+gemini=$(setzer price gemini)
 kraken=$(setzer price kraken)
 poloniex=$(setzer price poloniex)
 echo "Bitfinex:       $bitfinex"
@@ -16,5 +17,6 @@ echo "CoinMarketCap:  $coinmarketcap"
 echo "CryptoCompare:  $cryptocompare"
 echo "Etherscan:      $etherscan"
 echo "GDAX:           $gdax"
+echo "Gemini:         $gemini"
 echo "Kraken:         $kraken"
 echo "Poloniex:       $poloniex"
