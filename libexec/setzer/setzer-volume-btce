@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+### setzer-volume-btce -- get ether volume in USD from btc-e
+### Usage: setzer volume btce
+set -e
+
+json=$(curl -sS "https://btc-e.com/api/3/ticker/eth_usd")
+volume=$(jshon <<<"$json" -e eth_usd -e vol -u)
+echo $volume

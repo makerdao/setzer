@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+### setzer-price-btce -- get ether price in USD from btc-e
+### Usage: setzer price btce
+set -e
+
+json=$(curl -sS "https://btc-e.com/api/3/ticker/eth_usd")
+price=$(jshon <<<"$json" -e eth_usd -e last -u)
+echo $price
