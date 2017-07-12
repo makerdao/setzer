@@ -2,6 +2,7 @@
 ### setzer-volume-ls -- list all volumes
 ### Usage: setzer volume ls
 set -e
+bitbay=$(setzer volume bitbay)
 bitfinex=$(setzer volume bitfinex)
 bittrex=$(setzer volume bittrex)
 btce=$(setzer volume btce)
@@ -13,6 +14,7 @@ kraken=$(setzer volume kraken)
 livecoin=$(setzer volume livecoin)
 poloniex=$(setzer volume poloniex)
 yobit=$(setzer volume yobit)
+echo "Bitbay:         $bitbay"
 echo "Bitfinex:       $bitfinex"
 echo "Bittrex:        $bittrex"
 echo "BTC-E           $btce"

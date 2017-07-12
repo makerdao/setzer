@@ -2,6 +2,7 @@
 ### setzer-price-ls -- list all prices
 ### Usage: setzer price ls
 set -e
+bitbay=$(setzer price bitbay)
 bitfinex=$(setzer price bitfinex)
 bittrex=$(setzer price bittrex)
 btce=$(setzer price btce)
@@ -17,6 +18,7 @@ kraken=$(setzer price kraken)
 livecoin=$(setzer price livecoin)
 poloniex=$(setzer price poloniex)
 yobit=$(setzer price yobit)
+echo "Bitbay:         $bitbay"
 echo "Bitfinex:       $bitfinex"
 echo "Bittrex:        $bittrex"
 echo "BTC-E:          $btce"
