@@ -12,6 +12,7 @@ cryptocompare=$(setzer price cryptocompare)
 etherscan=$(setzer price etherscan)
 gdax=$(setzer price gdax)
 gemini=$(setzer price gemini)
+hitbtc=$(setzer price hitbtc)
 kraken=$(setzer price kraken)
 livecoin=$(setzer price livecoin)
 poloniex=$(setzer price poloniex)
@@ -26,6 +27,7 @@ echo "CryptoCompare:  $cryptocompare"
 echo "Etherscan:      $etherscan"
 echo "GDAX:           $gdax"
 echo "Gemini:         $gemini"
+echo "HitBTC:         $hitbtc"
 echo "Kraken:         $kraken"
 echo "Livecoin:       $livecoin"
 echo "Poloniex:       $poloniex"

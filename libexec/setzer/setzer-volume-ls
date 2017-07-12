@@ -8,6 +8,7 @@ btce=$(setzer volume btce)
 cex=$(setzer volume cex)
 gdax=$(setzer volume gdax)
 gemini=$(setzer volume gemini)
+hitbtc=$(setzer volume hitbtc)
 kraken=$(setzer volume kraken)
 livecoin=$(setzer volume livecoin)
 poloniex=$(setzer volume poloniex)
@@ -18,6 +19,7 @@ echo "BTC-E           $btce"
 echo "Cex:            $cex"
 echo "GDAX:           $gdax"
 echo "Gemini:         $gemini"
+echo "HitBTC:         $hitbtc"
 echo "Kraken:         $kraken"
 echo "Livecoin:       $livecoin"
 echo "Poloniex:       $poloniex"
