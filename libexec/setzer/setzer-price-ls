@@ -5,6 +5,7 @@ set -e
 bitfinex=$(setzer price bitfinex)
 bittrex=$(setzer price bittrex)
 btce=$(setzer price btce)
+cex=$(setzer price cex)
 coinbase=$(setzer price coinbase)
 coinmarketcap=$(setzer price coinmarketcap)
 cryptocompare=$(setzer price cryptocompare)
@@ -18,6 +19,7 @@ yobit=$(setzer price yobit)
 echo "Bitfinex:       $bitfinex"
 echo "Bittrex:        $bittrex"
 echo "BTC-E:          $btce"
+echo "Cex:            $cex"
 echo "Coinbase:       $coinbase"
 echo "CoinMarketCap:  $coinmarketcap"
 echo "CryptoCompare:  $cryptocompare"

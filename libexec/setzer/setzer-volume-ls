@@ -5,6 +5,7 @@ set -e
 bitfinex=$(setzer volume bitfinex)
 bittrex=$(setzer volume bittrex)
 btce=$(setzer volume btce)
+cex=$(setzer volume cex)
 gdax=$(setzer volume gdax)
 gemini=$(setzer volume gemini)
 kraken=$(setzer volume kraken)
@@ -14,6 +15,7 @@ yobit=$(setzer volume yobit)
 echo "Bitfinex:       $bitfinex"
 echo "Bittrex:        $bittrex"
 echo "BTC-E           $btce"
+echo "Cex:            $cex"
 echo "GDAX:           $gdax"
 echo "Gemini:         $gemini"
 echo "Kraken:         $kraken"
