@@ -9,7 +9,7 @@ set -e
 old=$1
 new=$2
 
-testforzero=$(bc <<< "${new} == 0")
+testforzero=$(bc <<< "${old} == 0")
 
 if [[ ${testforzero} -eq 0 ]]; then
     swing=$(bc <<< "scale=10;(${new} - ${old}) / ${old} * 100")
