@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -e
+test -z $ETH_FROM && export ETH_FROM=$(seth rpc eth_coinbase)
+test -z $ETH_RPC_PORT && export ETH_RPC_PORT=8545
+test -z $ETH_GAS && export ETH_GAS=200000
+test -z $SPREAD && export SPREAD=1
+test -z $SOURCE && exit 1;
+test -z $POKER && exit 1;
+test -z $MED && exit 1;
+
+export SOURCE=$SOURCE
+export POKER=$POKER
+export MED=$MED
+
+echo `date` "Acquired lock, running"
+
+# Processing starts here
+
+needsupdate=false
+expires=$(setzer expires "$POKER")
+echo "Expires in $expires seconds."
+if [ "$expires" -lt 3600 ]; then
+    echo "Expires in less than an hour, will update."
+    needsupdate=true
+fi
+
+old=$(setzer peek "$POKER")
+new=$(setzer price "$SOURCE")
+spread=$(setzer spread "$old" "$new")
+echo "Old:    " $old
+echo "New:    " $new
+echo "Spread: " $spread
+
+test=$(bc <<< "${spread#-} >= ${SPREAD}")
+if [[ ${test} -ne 0 ]]; then
+    needsupdate=true
+    echo "Spread larger than $SPREAD, will update."
+fi
+
+until=$(date +%s -d'+6 hour')
+
+if [ $needsupdate == true ]; then
+    setzer poker $POKER $MED "$new" "$until"
+fi
