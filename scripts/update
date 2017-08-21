@@ -45,9 +45,7 @@ if mkdir $LOCKDIR; then
     old=$(setzer peek "$POKER")
     new=$(setzer price "$SOURCE")
     spread=$(setzer spread "$old" "$new")
-    echo "Old:    " $old
-    echo "New:    " $new
-    echo "Spread: " $spread
+    echo "Old ($old) New ($new) Spread ($spread)"
     
     test=$(bc <<< "${spread#-} >= ${SPREAD}")
     if [[ ${test} -ne 0 ]]; then
