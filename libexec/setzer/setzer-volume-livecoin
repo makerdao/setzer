@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### setzer-livecoin -- get ether volume in USD from livecoin
+### setzer-volume-livecoin -- get ether volume in USD from livecoin
 ### Usage: setzer volume livecoin
 set -e
 

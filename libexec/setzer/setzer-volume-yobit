@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### setzer-yobit -- get ether volume in USD from yobit
+### setzer-volume-yobit -- get ether volume in USD from yobit
 ### Usage: setzer volume yobit
 set -e
 

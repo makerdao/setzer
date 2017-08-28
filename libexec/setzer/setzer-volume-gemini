@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### setzer-volume -- get ether volume in USD from gemini
+### setzer-volume-gemini -- get ether volume in USD from gemini
 ### Usage: setzer volume gemini
 set -e
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### setzer-price -- get ether price in USD from etherscan
+### setzer-price-etherscan -- get ether price in USD from etherscan
 ### Usage: setzer price etherscan
 set -e
 

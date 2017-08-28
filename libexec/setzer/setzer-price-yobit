@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### setzer-yobit -- get ether price in USD from yobit
+### setzer-price-yobit -- get ether price in USD from yobit
 ### Usage: setzer price yobit
 set -e
 
