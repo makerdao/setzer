@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### setzer-valid -- 
+### setzer-valid -- check if a dsvalue, dscache or medianizer has a value
 ### Usage: setzer valid <target>
 ###
 ### Returns true if <target> is valid, <false> otherwise
