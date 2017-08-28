@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### setzer-peek -- peek dsvalue
+### setzer-peek -- peek a dsvalue, dscache or medianizer
 ### Usage: setzer peek [<options>] <receiver> <sig> [<args>]
 ###    or: setzer peek [<options>] <receiver> <data>
 ###

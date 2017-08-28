@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### setzer-read -- read dsvalue, dscache or medianizer
+### setzer-read -- read a dsvalue, dscache or medianizer
 ### Usage: setzer read <target>
 ###
 ### Returns a formatted value of <target> or fails if invalid
