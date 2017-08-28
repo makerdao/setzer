@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### setzer-volume -- get ether volume in USD from bitbay
+### setzer-volume-bitbay -- get ether volume in USD from bitbay
 ### Usage: setzer volume bitbay
 set -e
 

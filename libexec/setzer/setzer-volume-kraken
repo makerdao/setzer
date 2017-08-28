@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### setzer-volume -- get ether volume in USD from kraken
+### setzer-volume-kraken -- get ether volume in USD from kraken
 ### Usage: setzer volume kraken
 set -e
 

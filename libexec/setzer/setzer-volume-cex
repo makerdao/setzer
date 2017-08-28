@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### setzer-volume -- get ether volume in USD from cex
+### setzer-volume-cex -- get ether volume in USD from cex
 ### Usage: setzer volume cex
 set -e
 

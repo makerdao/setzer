@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### setzer-volume -- get ether volume in USD from bitfinex
+### setzer-volume-bitfinex -- get ether volume in USD from bitfinex
 ### Usage: setzer volume bitfinex
 set -e
 

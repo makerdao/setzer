@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### setzer-volume -- get ether volume in USD from bittrex
+### setzer-volume-bittrex -- get ether volume in USD from bittrex
 ### Usage: setzer volume bittrex
 set -e
 

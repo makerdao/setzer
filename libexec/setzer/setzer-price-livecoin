@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### setzer-livecoin -- get ether price in USD from livecoin
+### setzer-price-livecoin -- get ether price in USD from livecoin
 ### Usage: setzer price livecoin
 set -e
 

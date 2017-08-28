@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### setzer-volume -- get ether volume in USD from hitbtc
+### setzer-volume-hitbtc -- get ether volume in USD from hitbtc
 ### Usage: setzer volume hitbtc
 set -e
 

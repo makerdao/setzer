@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### setzer-price -- get ether price in USD from coinmarketcap
+### setzer-price-coinmarketcap -- get ether price in USD from coinmarketcap
 ### Usage: setzer price coinmarketcap
 set -e
 

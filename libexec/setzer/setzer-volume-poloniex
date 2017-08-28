@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### setzer-volume -- get ether volume in USD from poloniex
+### setzer-volume-poloniex -- get ether volume in USD from poloniex
 ### Usage: setzer volume poloniex
 set -e
 
