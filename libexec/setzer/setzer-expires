@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-### setzer-expires -- update a ds-cache
+### setzer-expires -- get expiration in seconds (< 0 means expired)
 ### Usage: setzer expires <target>
 ###
-### Update <target> with <value> and <timestamp> expiration
+### get expiration in seconds (< 0 means expired)
 set -e
 [[ $# = 1 ]] || setzer --bad-usage "$0"
 zzz=$(seth call "$1" "zzz()(uint256)")

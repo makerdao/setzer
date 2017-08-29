@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 ### setzer-peek -- peek a dsvalue, dscache or medianizer
-### Usage: setzer peek [<options>] <receiver> <sig> [<args>]
-###    or: setzer peek [<options>] <receiver> <data>
+### Usage: setzer peek <target>
 ###
-### Perform a local call to <receiver> without publishing a transaction.
+### Returns current value of <target> and true/false if valid
 set -e
 [[ $1 ]] || setzer --bad-usage "$0"
 DSVALUE=$(seth --to-address "$1")
 
 now=($(seth call "$DSVALUE" "peek()(bytes32,bool)"))
-seth --to-fix 18 $(seth --to-dec ${now[0]})
+seth --to-fix 18 $(seth --to-dec "${now[0]}")
+echo "${now[1]}"

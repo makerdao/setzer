@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-### setzer-prod -- update a ds-cache
-### Usage: setzer prod <target> <value> <timestamp>
+### setzer-poker -- update a poker
+### Usage: setzer poker <target> <medianizer> <value> <timestamp>
 ###
-### Update <target> with <value> and <timestamp> expiration
+### Update <target> with <value> and <timestamp> expiration, and <medianizer> address to poke
 set -e
 [[ $# = 4 ]] || setzer --bad-usage "$0"
-wut=$(seth --to-uint256 $(seth --to-wei $3 ETH))
+wut=$(seth --to-uint256 $(seth --to-wei "$3" ETH))
 zzz=$(seth --to-uint256 "$4")
 (set -x; seth send "$1" "prod(address,bytes32,uint128)" "$2" "$wut" "$zzz")

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -e
-test -z $ETH_FROM && export ETH_FROM=$(seth rpc eth_coinbase)
 test -z $ETH_RPC_PORT && export ETH_RPC_PORT=8545
 test -z $ETH_GAS && export ETH_GAS=200000
-test -z $ETH_GAS_PRICE && export ETH_GAS_PRICE=5000000000
+test -z $ETH_GAS_PRICE && export ETH_GAS_PRICE=4000000000
 test -z $SPREAD && export SPREAD=1
+test -z $ETH_FROM && exit 1;
 test -z $SOURCE && exit 1;
 test -z $POKER && exit 1;
 test -z $MED && exit 1;
@@ -42,7 +42,8 @@ if mkdir $LOCKDIR; then
         needsupdate=true
     fi
 
-    old=$(setzer peek "$POKER")
+    old=($(setzer peek "$POKER"))
+    old=${old[0]}
     new=$(setzer price "$SOURCE")
     spread=$(setzer spread "$old" "$new")
     echo "Old ($old) New ($new) Spread ($spread)"
@@ -56,11 +57,10 @@ if mkdir $LOCKDIR; then
     until=$(date +%s -d'+6 hour')
 
     if [ $needsupdate == true ]; then
-        setzer poker $POKER $MED "$new" "$until"
+        setzer poker "$POKER" "$MED" "$new" "$until"
     fi
 
 else
     echo "Could not create lock directory '$LOCKDIR'"
     exit 1
 fi
-

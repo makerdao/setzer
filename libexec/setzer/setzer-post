@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+### setzer-post -- update a ds-price
+### Usage: setzer post <target> <value> <timestamp> <medianizer>
+###
+### Update <target> with <value> and <timestamp> expiration, and <medianizer> address to poke
+set -e
+[[ $# = 4 ]] || setzer --bad-usage "$0"
+wut=$(seth --to-uint256 $(seth --to-wei "$2" ETH))
+zzz=$(seth --to-uint256 "$3")
+(set -x; seth send "$1" "post(uint128,uint32,address)" "$wut" "$zzz" "$4")
