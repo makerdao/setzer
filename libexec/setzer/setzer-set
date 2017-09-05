@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
-### setzer-prod -- update a ds-cache
-### Usage: setzer prod <target> <value> <timestamp>
-###
-### Update <target> with <value> and <timestamp> expiration
+### setzer-set -- update a ds-cache
+### Usage: setzer set <target> <value>
 set -e
 [[ $# = 2 ]] || setzer --bad-usage "$0"
 (set -x; seth send "$1" "set(address)" "$2")
