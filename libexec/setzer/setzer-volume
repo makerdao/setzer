@@ -1,8 +1,36 @@
 #!/usr/bin/env bash
 ### setzer-volume -- show ETH/USD volume from <source>
-### Usage: setzer volume ls (show all)
-###        setzer volume <source>
+### Usage: setzer volume ls (lists all sources)
+###    or: setzer volume <source>
 set -e
-[[ $1 ]] || setzer --bad-usage "$0"
-set -- "${1,,}"
-exec "$0-$1"
+
+name=setzer
+
+if [[ $1 ]]; then
+  set -- "${1,,}"
+  exec "$0-$1"
+fi
+
+setzer help volume
+
+for file in ${0%/*}/$name-volume-*; do
+  if [[ -L $file ]]; then
+    continue
+  else
+    [[ "${file##*-}" != "ls" ]] && commands+=("$file")
+  fi
+done
+
+list-commands() {
+  for x in "$@"; do
+    echo "   ${x##*-}"
+  done
+}
+
+cat <<.
+
+Sources:
+
+$(list-commands "${commands[@]}")
+
+.

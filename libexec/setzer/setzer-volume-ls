@@ -1,26 +1,12 @@
 #!/usr/bin/env bash
 set -e
-bitbay=$(setzer volume bitbay)
-bitfinex=$(setzer volume bitfinex)
-bittrex=$(setzer volume bittrex)
-btce=$(setzer volume btce)
-cex=$(setzer volume cex)
-gdax=$(setzer volume gdax)
-gemini=$(setzer volume gemini)
-hitbtc=$(setzer volume hitbtc)
-kraken=$(setzer volume kraken)
-livecoin=$(setzer volume livecoin)
-poloniex=$(setzer volume poloniex)
-yobit=$(setzer volume yobit)
-echo "Bitbay:         $bitbay"
-echo "Bitfinex:       $bitfinex"
-echo "Bittrex:        $bittrex"
-echo "BTC-E           $btce"
-echo "Cex:            $cex"
-echo "GDAX:           $gdax"
-echo "Gemini:         $gemini"
-echo "HitBTC:         $hitbtc"
-echo "Kraken:         $kraken"
-echo "Livecoin:       $livecoin"
-echo "Poloniex:       $poloniex"
-echo "Yobit:          $yobit"
+name=setzer
+for file in ${0%/*}/$name-volume-*; do
+  if [[ -L $file ]]; then
+    continue
+  else
+    if [[ "${file##*-}" != "ls" ]]; then
+      printf "%14s : %8f\n" "${file##*-}" $($file)
+    fi
+  fi
+done

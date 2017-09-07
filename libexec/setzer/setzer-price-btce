@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-set -e
-json=$(curl -sS "https://btc-e.com/api/3/ticker/eth_usd")
-price=$(jshon <<<"$json" -e eth_usd -e last -u)
-echo $price

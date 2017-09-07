@@ -1,8 +1,36 @@
 #!/usr/bin/env bash
 ### setzer-price -- show ETH/USD price from <source>
-### Usage: setzer price ls (show all)
-###        setzer price <source>
+### Usage: setzer price ls (lists all sources)
+###    or: setzer price <source>
 set -e
-[[ $1 ]] || setzer --bad-usage "$0"
-set -- "${1,,}"
-exec "$0-$1"
+
+name=setzer
+
+if [[ $1 ]]; then
+  set -- "${1,,}"
+  exec "$0-$1"
+fi
+
+setzer help price
+
+for file in ${0%/*}/$name-price-*; do
+  if [[ -L $file ]]; then
+    continue
+  else
+    [[ "${file##*-}" != "ls" ]] && commands+=("$file")
+  fi
+done
+
+list-commands() {
+  for x in "$@"; do
+    echo "   ${x##*-}"
+  done
+}
+
+cat <<.
+
+Sources:
+
+$(list-commands "${commands[@]}")
+
+.
