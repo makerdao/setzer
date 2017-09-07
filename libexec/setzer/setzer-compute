@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 ### setzer-compute -- get what the medianizer value would be if updated
 ### Usage: setzer compute <medianizer>
+###
+### Returns value and true/false for valid
 set -e
 [[ $1 ]] || setzer --bad-usage "$0"
 seth call "$1" "compute()(bytes32,bool)"

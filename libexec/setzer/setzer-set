@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-### setzer-prod -- update a ds-cache
-### Usage: setzer prod <target> <value> <timestamp>
+### setzer-set -- set next feed of a medianizer
+### Usage: setzer set <medianizer> <feed>
 ###
-### Update <target> with <value> and <timestamp> expiration
+### Add <feed> at the end of a <medianizer>
 set -e
 [[ $# = 2 ]] || setzer --bad-usage "$0"
 (set -x; seth send "$1" "set(address)" "$2")

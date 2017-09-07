@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-### setzer-spread -- get ether price and spread dsvalue
-### Usage: setzer spread [<options>] <receiver> <sig> [<args>]
+### setzer-spread -- variance of 2 values in %
+### Usage: setzer spread <value1> <value2>
 ###
-### get ether price and update dsvalue
+### Returns % variance between <value1> and <value2>
 set -e
 [[ $# = 2 ]] || setzer --bad-usage "$0"
 
