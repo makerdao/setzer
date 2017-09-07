@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -e
+test -z $ETH_RPC_PORT && export ETH_RPC_PORT=8545
+test -z $ETH_GAS && export ETH_GAS=200000
+test -z $ETH_GAS_PRICE && export ETH_GAS_PRICE=4000000000
+test -z $SPREAD && export SPREAD=1
+
+SOURCE=cryptocompare
+POKER=0xD0E900C153225517739B0Df07A00DE2E76e263cb
+MED=0x729d19f657bd0614b4985cf1d82531c67569197b
+
+expires=$(setzer expires "$POKER")
+echo >&2 "Expires in $expires seconds."
+if [ "$expires" -lt 3600 ]; then
+    echo >&2 "Expires in less than an hour, will update."
+    needsupdate=true
+fi
+
+old=($(setzer peek "$POKER"))
+old=${old[0]}
+new=$(setzer price "$SOURCE")
+spread=$(setzer spread "$old" "$new")
+echo >&2 "Old ($old) New ($new) Spread ($spread)"
+
+test=$(bc <<< "${spread#-} >= ${SPREAD}")
+if [[ ${test} -ne 0 ]]; then
+    needsupdate=true
+    echo >&2 "Spread larger than $SPREAD, will update."
+fi
+
+until=$(date +%s -d'+6 hour')
+
+if [ $needsupdate ]; then
+    tx=$(SETH_ASYNC=yes setzer post "$POKER" "$new" "$until" "$MED")
+    echo $tx
+fi
