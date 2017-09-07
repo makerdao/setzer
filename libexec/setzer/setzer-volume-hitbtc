@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-### setzer-volume-hitbtc -- get ether volume in USD from hitbtc
-### Usage: setzer volume hitbtc
 set -e
-
 json=$(curl -sS "https://api.hitbtc.com/api/1/public/ETHUSD/ticker")
 volume=$(jshon <<<"$json" -e volume -u)
 echo $volume

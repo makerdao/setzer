@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
+### setzer-volume -- show ETH/USD volume from <source>
+### Usage: setzer volume ls (show all)
+###        setzer volume <source>
 set -e
-# set -- "${1,,}"
-set -- "${1//\/}"
+[[ $1 ]] || setzer --bad-usage "$0"
+set -- "${1,,}"
 exec "$0-$1"

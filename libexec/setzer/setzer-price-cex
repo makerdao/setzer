@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-### setzer-price-cex -- get ether price in USD from cex
-### Usage: setzer price cex
 set -e
-
 json=$(curl -sS "https://cex.io/api/tickers/USD")
 l=$(jshon <<<"$json" -e data -l)
 for (( i=0; i<$l; i++ ))

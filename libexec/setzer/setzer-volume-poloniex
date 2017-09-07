@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-### setzer-volume-poloniex -- get ether volume in USD from poloniex
-### Usage: setzer volume poloniex
 set -e
-
 json=$(curl -sS "https://poloniex.com/public?command=returnTicker")
 volume=$(jshon <<<"$json" -e USDT_ETH -e quoteVolume -u)
 echo $volume

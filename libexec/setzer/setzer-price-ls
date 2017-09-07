@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-### setzer-price-ls -- list all prices
-### Usage: setzer price ls
 set -e
 bitbay=$(setzer price bitbay)
 bitfinex=$(setzer price bitfinex)

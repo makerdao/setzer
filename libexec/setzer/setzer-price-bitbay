@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-### setzer-price-bitbay -- get ether price in USD from bitbay
-### Usage: setzer price bitbay
 set -e
-
 json=$(curl -sS "https://bitbay.net/API/Public/ETHUSD/ticker.json")
 price=$(jshon <<<"$json" -e last -u)
 echo $price

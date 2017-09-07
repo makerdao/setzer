@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-### setzer-volume-cex -- get ether volume in USD from cex
-### Usage: setzer volume cex
 set -e
-
 json=$(curl -sS "https://cex.io/api/tickers/USD")
 l=$(jshon <<<"$json" -e data -l)
 for (( i=0; i<$l; i++ ))

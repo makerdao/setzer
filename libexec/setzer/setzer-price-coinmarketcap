@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-### setzer-price-coinmarketcap -- get ether price in USD from coinmarketcap
-### Usage: setzer price coinmarketcap
 set -e
-
 json=$(curl -sS "https://api.coinmarketcap.com/v1/ticker/ethereum/")
 price=$(jshon <<<"$json" -e 0 -e price_usd -u)
 echo $price

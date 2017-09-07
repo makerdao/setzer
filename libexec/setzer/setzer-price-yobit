@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-### setzer-price-yobit -- get ether price in USD from yobit
-### Usage: setzer price yobit
 set -e
-
 json=$(curl -sS "https://yobit.net/api/2/eth_usd/ticker")
 price=$(jshon <<<"$json" -e ticker -e last -u)
 echo $price

@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-### setzer-price-bitfinex -- get ether price in USD from bitfinex
-### Usage: setzer price bitfinex
 set -e
-
 json=$(curl -sS "https://api.bitfinex.com/v1/pubticker/ethusd")
 price=$(jshon <<<"$json" -e last_price -u)
 echo $price

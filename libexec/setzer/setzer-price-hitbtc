@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-### setzer-price-hitbtc -- get ether price in USD from hitbtc
-### Usage: setzer price hitbtc
 set -e
-
 json=$(curl -sS "https://api.hitbtc.com/api/1/public/ETHUSD/ticker")
 price=$(jshon <<<"$json" -e last -u)
 echo $price

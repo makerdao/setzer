@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-### setzer-price-gemini -- get ether price in USD from gemini
-### Usage: setzer price gemini
 set -e
-
 json=$(curl -sS "https://api.gemini.com/v1/pubticker/ethusd")
 price=$(jshon <<<"$json" -e last -u)
 echo $price

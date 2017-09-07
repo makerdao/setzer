@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-### setzer-volume-gdax -- get ether volume in USD from gdax
-### Usage: setzer volume gdax
 set -e
-
 json=$(curl -sS "https://api.gdax.com/products/ETH-USD/ticker")
 volume=$(jshon <<<"$json" -e volume -u)
 echo $volume

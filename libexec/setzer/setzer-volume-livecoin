@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-### setzer-volume-livecoin -- get ether volume in USD from livecoin
-### Usage: setzer volume livecoin
 set -e
-
 json=$(curl -sS "https://api.livecoin.net/exchange/ticker?currencyPair=ETH/USD")
 volume=$(jshon <<<"$json" -e volume -u)
 echo $volume

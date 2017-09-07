@@ -1,17 +1,87 @@
 #!/usr/bin/env bash
-set -e
-date=$(date +%s%3N)
-echo $date
-LOCKDIR="/tmp/update_mainnet2"
-echo $LOCKDIR$date
-# new=174.98765
-# old=178.940001
-# echo Old: $old
-# echo New: $new
-# swing=$(bc <<< "scale=10;(${new} - ${old}) / ${old} * 100")
-# test=$(bc <<< "${swing#-} >= 1")
-# if [[ ${test} -eq 1 ]]; then
-#     echo 'YAY'
-# fi
+#set -e
 
-#seth send $DSVALUE "poke(bytes32)" $(seth --to-uint256 $(seth --to-wei "$price" ETH))
+[[ $1 = --interactive ]] && SETZER_INTERACTIVE=yes
+
+[[ $ETH_FROM ]] || export ETH_FROM="0x00DaA9a2D88BEd5a29A6ca93e0B7d860cd1d403F";
+[[ $ETH_GAS ]] || export ETH_GAS=200000
+[[ $ETH_GAS_PRICE ]] || export ETH_GAS_PRICE=`seth --to-wei 1 gwei`
+LOOP_EVERY=15
+INCREASE_BY=1
+INCREASE_EVERY=3
+txs=($HASHES)
+export SETH_ASYNC=yes
+
+echo >&2 "--------- STARTING PROGRAM ---------"
+
+[[ ${#txs[@]} -gt 0 ]] && echo >&2 "Found ${#txs[@]} pending transactions"
+
+for x in "${txs[@]}";
+do
+    echo >&2 "Checking status of tx $x"
+    res=$(set -x; seth receipt "$x" blockNumber) || true
+    [[ $res ]] && { mined=$x; break; }
+done
+
+if [[ $mined ]]; then
+    #reset gas
+    echo >&2 "Tx $mined was mined successfully."
+    HASHES=""
+    export ETH_GAS_PRICE=`seth --to-wei 1 gwei`
+else
+    if [[ ${#txs[@]} -gt 0 ]]; then
+        # increase gas price
+        export ETH_GAS_PRICE=$(($ETH_GAS_PRICE * 2))
+        echo >&2 "New gas price: $ETH_GAS_PRICE"
+    fi
+fi
+
+### Actual thing to do...
+SOURCE="cryptocompare"
+POKER="0xD0E900C153225517739B0Df07A00DE2E76e263cb"
+MED="0x729d19f657bd0614b4985cf1d82531c67569197b"
+SPREAD=".01"
+needsupdate=
+expires=$(setzer expires "$POKER")
+if [ "$expires" -lt 3600 ]; then
+    echo >&2 "Expires in less than an hour, will update."
+    needsupdate="true"
+else
+    echo >&2 "Expires in $expires seconds."
+fi
+
+old=($(setzer peek "$POKER"))
+old=${old[0]}
+new=$(setzer price "$SOURCE")
+spread=$(setzer spread "$old" "$new")
+echo >&2 "Old ($old) New ($new) Spread ($spread)"
+
+test=$(bc <<< "${spread#-} >= ${SPREAD}")
+if [[ ${test} -ne 0 ]]; then
+    needsupdate="true"
+    echo >&2 "Spread larger than $SPREAD, will update."
+fi
+
+until=$(date +%s -d'+6 hour')
+
+
+if [[ $needsupdate ]]; then
+    [[ $SETZER_INTERACTIVE ]] && read -r -p "Are you sure? [y/N] " response
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
+        nonce=$(seth nonce "$ETH_FROM")
+        export ETH_NONCE=$nonce
+        echo >&2 "Sending with nonce $ETH_NONCE"
+        #tx=$(setzer post "$POKER" "$new" "$until" "$MED") || true
+        tx="zomg!"
+        [[ $tx ]] && HASHES="${txs[@]} $tx"
+    fi
+fi
+###
+export HASHES=$HASHES
+secs="$LOOP_EVERY"
+while [ $secs -gt 0 ]; do
+   echo -ne >&2 "will sleep for $secs\033[0K\r"
+   sleep 1
+   : $((secs--))
+done
+exec "$0" "$@"

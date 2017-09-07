@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
+### setzer-price -- show ETH/USD price from <source>
+### Usage: setzer price ls (show all)
+###        setzer price <source>
 set -e
-echo $1
-#set -- "${1//\/}"
+[[ $1 ]] || setzer --bad-usage "$0"
 set -- "${1,,}"
-echo $1
 exec "$0-$1"

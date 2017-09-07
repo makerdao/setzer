@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-### setzer-volume-gemini -- get ether volume in USD from gemini
-### Usage: setzer volume gemini
 set -e
-
 json=$(curl -sS "https://api.gemini.com/v1/pubticker/ethusd")
 volume=$(jshon <<<"$json" -e volume -e ETH -u)
 echo $volume

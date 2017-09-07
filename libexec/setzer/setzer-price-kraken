@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-### setzer-price-kraken -- get ether price in USD from kraken
-### Usage: setzer price kraken
 set -e
-
 json=$(curl -sS "https://api.kraken.com/0/public/Ticker?pair=ETHUSD")
 price=$(jshon <<<"$json" -e result -e XETHZUSD -e c -e 0 -u)
 echo $price

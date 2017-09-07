@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-### setzer-price-poloniex -- get ether price in USD from poloniex
-### Usage: setzer price poloniex
 set -e
-
 json=$(curl -sS "https://poloniex.com/public?command=returnTicker")
 price=$(jshon <<<"$json" -e USDT_ETH -e last -u)
 echo $price

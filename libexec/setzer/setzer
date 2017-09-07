@@ -4,25 +4,10 @@
 ###    or: setzer <command> --help
 ###
 ### Manipulate feeds and update data
-###
-### Connection options:
-###
-###    --rpc-host=<host>          JSON-RPC host (default: `localhost')
-###    --rpc-port=<port>          JSON-RPC port (default: `8545')
-###
-### Transaction options:
-###
-###    -F, --from=<sender>        account to send transaction from
-###    -G, --gas=<number>         number of gas units to provide
-###    -S, --spread=<number>      minimum spread needed to change value
 
 OPTS="setzer [<options>] <command> [<args>]
 setzer <command> --help
 --
-  Connection options:
-rpc-host=host        JSON-RPC host (default: \`localhost')
-rpc-port=port        JSON-RPC port (default: \`8545')
-
   Options
 S,spread=number      minimum spread needed to change value
 F,from=address       account from which to send transaction
@@ -30,6 +15,12 @@ G,gas=number         amount of gas to provide with transaction
 "
 
 set -e
+
+if ! [[ $SETZER_INIT ]]; then
+  export SETZER_INIT=1
+  [[ -e ~/.setzerrc ]] && . ~/.setzerrc
+  [[ $(pwd) != ~ && -e .setzerrc ]] && . .setzerrc
+fi
 
 if [[ $2 = --help ]]; then
   exec "${0##*/}" help -- "$1"

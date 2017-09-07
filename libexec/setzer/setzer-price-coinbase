@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-### setzer-price-coinbase -- get ether price in USD from coinbase
-### Usage: setzer price coinbase
 set -e
-
 json=$(curl -sS "https://api.coinbase.com/v2/prices/ETH-USD/spot")
 price=$(jshon <<<"$json" -e data -e amount -u)
 echo $price
