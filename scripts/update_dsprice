@@ -54,7 +54,7 @@ if mkdir $LOCKDIR; then
 
     until=$(date +%s -d'+6 hour')
 
-    if [ $needsupdate == true ]; then
+    if [ $needsupdate ]; then
         setzer post "$POKER" "$new" "$until" "$MED"
     fi
 
