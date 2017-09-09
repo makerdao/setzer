@@ -7,8 +7,8 @@ set -e
 name=setzer
 
 if [[ $1 ]]; then
-  set -- "${1,,}"
-  exec "$0-$1"
+  source=$(tr A-Z a-z <<<"$1")
+  exec "$0-$source"
 fi
 
 setzer help volume

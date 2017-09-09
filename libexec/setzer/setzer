@@ -5,15 +5,6 @@
 ###
 ### Manipulate feeds and update data
 
-OPTS="setzer [<options>] <command> [<args>]
-setzer <command> --help
---
-  Options
-S,spread=number      minimum spread needed to change value
-F,from=address       account from which to send transaction
-G,gas=number         amount of gas to provide with transaction
-"
-
 set -e
 
 if ! [[ $SETZER_INIT ]]; then
@@ -23,29 +14,9 @@ if ! [[ $SETZER_INIT ]]; then
 fi
 
 if [[ $2 = --help ]]; then
-  exec "${0##*/}" help -- "$1"
+  exec "${0##*/}" help "$1"
 elif [[ $1 = -* ]] && which "${0##*/}-$1" &>/dev/null; then
   exec "${0##*/}-$1" "${@:2}"
 fi
-
-eval "$(git rev-parse --parseopt -- "$@" <<<"$OPTS" || echo exit $?)"
-
-while [[ $1 ]]; do
-  case $1 in
-    --)              shift; break;;
-
-    --rpc-host)      shift; export ETH_RPC_HOST=$1;;
-    --rpc-port)      shift; export ETH_RPC_PORT=$1;;
-
-    -S|--spread)     shift; export SPREAD=$1;;
-
-    -F|--from)       shift; export ETH_FROM=$1;;
-    -G|--gas)        shift; export ETH_GAS=$1;;
-
-    -h)                     export SAI_HUMAN=1;;
-
-    *) printf "${0##*/}: internal error: %q\n" "$1"; exit 1
-  esac; shift
-done
 
 "${0##*/}-${1-help}" "${@:2}"

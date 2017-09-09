@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 #set -e
-
 [[ $1 = --interactive ]] && SETZER_INTERACTIVE=yes
 
 [[ $ETH_FROM ]] || export ETH_FROM="0x00DaA9a2D88BEd5a29A6ca93e0B7d860cd1d403F";

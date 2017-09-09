@@ -4,5 +4,6 @@
 ###
 ### Add <feed> at the end of a <medianizer>
 set -e
-[[ $# = 2 ]] || setzer --bad-usage "$0"
-(set -x; seth send "$1" "set(address)" "$2")
+[[ $# -ge 2 ]] || setzer --bad-usage "$0"
+#(set -x; seth send "$1" "set(address)" "$2" "${@:2}")
+echo seth send "$1" "set(address)" "$2" "${@:3}"
