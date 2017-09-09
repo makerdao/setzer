@@ -4,6 +4,5 @@
 ###
 ### voids <target>. Read will fail, peek will return false
 set -e
-[[ $# = 1 ]] || setzer --bad-usage "$0"
-TARGET=$(seth --to-address "$1")
-(set -x; seth send "$TARGET" "void()")
+[[ $# -ge 1 ]] || setzer --bad-usage "$0"
+(set -x; seth send "$1" "void()" "${@:2}")

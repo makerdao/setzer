@@ -1,0 +1,10 @@
+[Unit]
+Description=Feed Updater
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/setzer test
+
+[Install]
+WantedBy=multi-user.target

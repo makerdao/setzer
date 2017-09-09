@@ -4,7 +4,7 @@
 ###
 ### Update <target> with <value> and <timestamp> expiration, and <medianizer> address to poke
 set -e
-[[ $# = 4 ]] || setzer --bad-usage "$0"
+[[ $# -ge 4 ]] || setzer --bad-usage "$0"
 wut=$(seth --to-uint256 $(seth --to-wei "$3" ETH))
 zzz=$(seth --to-uint256 "$4")
-(set -x; seth send "$1" "prod(address,bytes32,uint128)" "$2" "$wut" "$zzz")
+(set -x; seth send "$1" "prod(address,bytes32,uint128)" "$2" "$wut" "$zzz" "${@:5}")

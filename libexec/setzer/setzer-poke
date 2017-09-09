@@ -4,6 +4,5 @@
 ###
 ### Update a <target> medianizer
 set -e
-[[ $1 ]] || setzer --bad-usage "$0"
-DSVALUE=$(seth --to-address "$1")
-echo $(seth send "$DSVALUE" "poke()")
+[[ $# -ge 1 ]] || setzer --bad-usage "$0"
+(set -x; seth send "$1" "poke()" "${@:2}")

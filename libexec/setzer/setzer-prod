@@ -4,6 +4,6 @@
 ###
 ### Update <target> with <value> and <timestamp> expiration
 set -e
-[[ $# = 3 ]] || setzer --bad-usage "$0"
+[[ $# -ge 3 ]] || setzer --bad-usage "$0"
 zzz=$(seth --to-uint256 "$3")
-(set -x; seth send "$1" "prod(bytes32,uint128)" "$2" "$zzz")
+(set -x; seth send "$1" "prod(bytes32,uint128)" "$2" "$zzz" "${@:4}")
