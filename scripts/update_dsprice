@@ -33,10 +33,8 @@ if mkdir $LOCKDIR; then
     echo `date` "Acquired lock, running"
 
     # Processing starts here
-
-    needsupdate=false
     expires=$(setzer expires "$POKER")
-    echo "Expires in $expires seconds."
+    echo Expires in `setzer --format "$expires"`
     if [ "$expires" -lt 3600 ]; then
         echo "Expires in less than an hour, will update."
         needsupdate=true
