@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+### setzer-average -- get average price of 2 or more <source>
+### Usage: setzer average <source1> <source2> ... <sourceN>
+###
+### Return average price of 2 or more price <source>
+### If a source is unavailable, ignore
+### See `setzer price` for sources
+### Example: setzer average coinbase etherscan gemini
+set -e
+[[ $# -ge 2 ]] || setzer --bad-usage "$0"
+
+for file in $@; do
+  price=$("${0%/*}/setzer-price-$file") || true
+  avg+=($price)
+done
+
+awk '{s+=$1}END{print s/NR}' RS=" " <<< ${avg[@]}
