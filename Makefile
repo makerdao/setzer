@@ -9,6 +9,7 @@ files = $(shell ls -d $(dirs)/*)
 install:; cp -r -n $(dirs) $(prefix)
 link: dirs; for x in $(files); do ln -s `pwd`/$$x $(prefix)/$$x; done
 uninstall:; rm -r $(addprefix $(prefix)/,$(files))
+service:; cp setzer-bot.service /etc/systemd/system/ && systemctl daemon-reload
 
 test:; ! grep '^#!/bin/sh' libexec/*/* && \
 grep '^#!/usr/bin/env bash' libexec/*/* | \
