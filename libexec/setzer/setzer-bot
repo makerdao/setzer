@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+### setzer-bot -- omg
+### ermagherd
+#set -e
+
+# Initialization
+
+if ! [[ $SETZER_BOT_INIT ]]; then
+  export SETZER_BOT_INIT=1
+  export SETH_ASYNC=yes
+  echo "--------- STARTING SETZER BOT ---------"
+  echo "Bot started `date`"
+  [[ $ETH_FROM ]] || errors+=("No default account set. Please set it via ETH_FROM ")
+  [[ $SETZER_FEED ]] || errors+=("No price feed set. Please set it via SETZER_FEED ")
+  [[ $SETZER_MEDIANIZER ]] || errors+=("No medianizer set. Please set it via SETZER_MEDIANIZER ")
+  [[ $SETZER_SOURCES ]] || errors+=("No price sources set. Please set them via SETZER_SOURCES ")
+
+  [[ $SETZER_LOOP_SECONDS ]] || export SETZER_LOOP_SECONDS=60
+
+  [[ $SETZER_LOOPS_BETWEEN_PRICE_INCREASE ]] || export SETZER_LOOPS_BETWEEN_PRICE_INCREASE=4
+
+  [[ $errors ]] && { printf '%s\n' "${errors[@]}"; exit 1; }
+
+  [[ $1 = --interactive ]] && SETZER_INTERACTIVE=yes
+  
+  export ETH_GAS_PRICE=`seth --to-wei 1 gwei`
+  export ETH_GAS=200000
+
+  echo "Default account:    $ETH_FROM"
+  echo "Feed address:       $SETZER_FEED"
+  echo "Medianizer address: $SETZER_MEDIANIZER"
+  echo "Price sources:      $SETZER_SOURCES"
+  echo "Starting gas price: $ETH_GAS_PRICE wei"
+fi
+
+[[ $SETZER_TEST ]] && echo test is set
+exit;
+# Check if we have transactions pending
+txs=($PENDING_TRANSACTIONS)
+if [[ ${#txs[@]} -gt 0 ]]; then
+  echo "Found ${#txs[@]} pending transactions"
+  for x in "${txs[@]}";
+  do
+      echo "Checking status of tx $x"
+      res=$(seth receipt "$x" blockNumber) || true
+      [[ $res ]] && { mined=$x; break; }
+  done
+fi
+
+#  
+if [[ $mined ]]; then
+    #reset gas
+    echo "Tx $mined was mined successfully."
+    echo "Reset gas price to 1 gwei"
+    now=$(date +%s)
+    how_long=$(setzer --format $(($now - $UPDATE_TIMESTAMP)))
+    echo Update took $how_long
+    UPDATE_TIMESTAMP=
+    PENDING_TRANSACTIONS=
+    export ETH_GAS_PRICE=`seth --to-wei 1 gwei`
+else
+    if [[ ${#txs[@]} -gt 0 ]]; then
+        # increase gas price
+        newgasprice=$(seth --to-wei 1 gwei)
+        export ETH_GAS_PRICE=$(($ETH_GAS_PRICE + $newgasprice))
+        echo "New gas price: $ETH_GAS_PRICE"
+    fi
+fi
+
+
+SPREAD=1.5
+gas=$(seth gas-price)
+echo "Current gas price is $gas wei"
+[[ $gas -gt 21000000000 ]] && echo "WARNING: Higher than normal gas price"
+
+
+
+expires=$(setzer expires "$SETZER_FEED")
+echo Expires in `setzer --format "$expires"`
+if [ "$expires" -lt 3600 ]; then
+    echo "Expires in less than an hour, will update."
+    needsupdate=true
+fi
+
+old=($(setzer peek "$SETZER_FEED"))
+old=${old[0]}
+new=$(setzer average $SETZER_SOURCES)
+spread=$(setzer spread "$old" "$new")
+echo "Old ($old) New ($new) Spread ($spread)"
+
+test=$(bc <<< "${spread#-} >= ${SPREAD}")
+if [[ ${test} -ne 0 ]]; then
+    needsupdate="yes"
+    echo "Spread larger than $SPREAD, will update."
+fi
+
+until=$(date +%s -d'+6 hour')
+
+if [[ $needsupdate ]]; then
+  [[ $SETZER_INTERACTIVE ]] && read -r -p "Are you sure? [y/N] " response
+  if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
+    nonce=$(seth nonce "$ETH_FROM")
+    export ETH_NONCE=$nonce
+    echo "Sending with nonce $ETH_NONCE"
+    tx=$(setzer post "$SETZER_FEED" "$new" "$until" "$SETZER_MEDIANIZER") || true
+    if [[ $tx ]]; then
+      PENDING_TRANSACTIONS="${txs[@]} $tx"
+      UPDATE_TIMESTAMP=$(date +%s)
+    fi
+  fi
+fi
+
+export PENDING_TRANSACTIONS=$PENDING_TRANSACTIONS
+export UPDATE_TIMESTAMP=$UPDATE_TIMESTAMP
+
+echo Waiting "$SETZER_LOOP_SECONDS" seconds
+sleep $SETZER_LOOP_SECONDS
+exec "$0" "$@"

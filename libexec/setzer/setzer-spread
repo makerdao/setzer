@@ -12,8 +12,8 @@ new=$2
 iszero=$(bc <<< "${old} == 0")
 
 if [[ ${iszero} -eq 0 ]]; then
-    swing=$(bc <<< "scale=10;(${new} - ${old}) / ${old} * 100")
-    exec echo $swing
+  swing=$(bc <<< "scale=10;(${new} - ${old}) / ${old} * 100")
+  exec echo $swing
 fi
 
 echo 9999
