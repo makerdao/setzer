@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+#set -e
+#set -x
+
+wrap() {
+  res=$(${@} 2> /dev/null)
+}
+
+wrap seth chain
+if [[ $res ]]; then
+  echo Chain is $res
+else
+  echo 'error'
+  sleep 5
+  exec "$0" "$@"
+fi
+exit
+
+res=$(setzer price gdaxa)
+exit_status=$?
+if [ $exit_status != 0 ];
+  then
+    echo Will exit with status $exit_status
+    exit $exit_status
+fi
+echo Finished

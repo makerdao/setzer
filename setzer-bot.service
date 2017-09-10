@@ -5,7 +5,9 @@ After=multi-user.target
 [Service]
 Type=simple
 ExecStart=/usr/local/bin/setzer bot
-Restart=always
+
+User=nanexcool
+Group=nanexcool
 
 [Install]
 WantedBy=multi-user.target
