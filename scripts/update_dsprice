@@ -55,6 +55,7 @@ if mkdir $LOCKDIR; then
     until=$(date +%s -d'+6 hour')
 
     if [ $needsupdate ]; then
+        export ETH_NONCE=$(seth nonce "$ETH_FROM")
         setzer post "$POKER" "$new" "$until" "$MED"
     fi
 
