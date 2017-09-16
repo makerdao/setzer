@@ -3,7 +3,7 @@
 ### Usage: setzer bot [--interactive]
 ###
 ### Instructions very soon
-#set -e
+#set -ex
 
 # Initialization
 
@@ -18,15 +18,15 @@ if ! [[ $SETZER_BOT_INIT ]]; then
   [[ $SETZER_MEDIANIZER ]] || errors+=("No medianizer set. Please set it via SETZER_MEDIANIZER ")
   [[ $SETZER_SOURCES ]] || errors+=("No price sources set. Please set them via SETZER_SOURCES ")
   
-  [[ $errors ]] && { printf '%s\n' "${errors[@]}"; exit 1; }
+  #[[ $errors ]] && { printf '%s\n' "${errors[@]}"; exit 1; }
 
-  [[ $SETZER_SPREAD ]] || export SETZER_SPREAD=1.5
+  [[ $SETZER_SPREAD ]] || export SETZER_SPREAD=.5
 
   [[ $SETZER_LOOP_SECONDS ]] || export SETZER_LOOP_SECONDS=60
 
   [[ $SETZER_LOOPS_BETWEEN_PRICE_INCREASE ]] || export SETZER_LOOPS_BETWEEN_PRICE_INCREASE=4
 
-  [[ $SETZER_INTERACTIVE || $1 = --interactive ]] && { export SETZER_INTERACTIVE=yes; echo Interactive mode ON; }
+  [[ $SETZER_AUTO || $1 = --auto ]] && { export SETZER_AUTO=yes; echo AUTO mode ON; }
   
   # TODO: these should be automatic
   # maybe have SETZER_MAX_GAS_PRICE
@@ -44,7 +44,7 @@ fi
 # Check if connected to node
 # TODO: use something other than gas price
 chain=$(seth gas-price 2> /dev/null)
-[[ $chain ]] || { echo No connection, will try in 10 seconds; sleep 10; exec "$0" "$@"; }
+[[ $chain ]] || { echo Not connected to Ethereum, retry in 30 seconds...; sleep 30; exec "$0" "$@"; }
 
 # Check if we have transactions pending
 txs=($PENDING_TRANSACTIONS)
@@ -87,8 +87,8 @@ echo "Current gas price:  $gas wei"
 expires=$(setzer expires "$SETZER_FEED")
 echo Expires in `setzer --format "$expires"`
 if [ "$expires" -lt 3600 ]; then
-    echo "Expires in less than an hour, will update."
-    needsupdate=true
+  echo "Expires in less than an hour, will update."
+  needsupdate=true
 fi
 
 old=($(setzer peek "$SETZER_FEED"))
@@ -96,23 +96,26 @@ old=${old[0]}
 new=$(setzer average $SETZER_SOURCES)
 spread=$(setzer spread "$old" "$new")
 echo "Old ($old) New ($new) Spread ($spread)"
+echo $spread
+echo $SETZER_SPREAD
+test=$(bc <<< "${spread#-} >= ${SETZER_SPREAD}")
 
-test=$(bc <<< "${spread#-} >= ${SPREAD}")
 if [[ ${test} -ne 0 ]]; then
-    needsupdate="yes"
-    echo "Spread larger than $SPREAD, will update."
+  needsupdate="yes"
+  echo "Spread larger than $SETZER_SPREAD, will update."
 fi
 
 until=$(date +%s -d'+6 hour')
 
 if [[ $needsupdate ]]; then
-  [[ $SETZER_INTERACTIVE ]] && read -r -p "Are you sure? [y/N] " response
-  if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
+  [[ ! $SETZER_AUTO ]] && read -r -p "Are you sure? [y/N] " response
+  if [[ $SETZER_AUTO || "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
     nonce=$(seth nonce "$ETH_FROM")
     export ETH_NONCE=$nonce
     echo "Sending with nonce $ETH_NONCE"
-    tx=$(setzer post "$SETZER_FEED" "$new" "$until" "$SETZER_MEDIANIZER") || true
+    tx=$(setzer post "$SETZER_FEED" "$new" "$until" "$SETZER_MEDIANIZER")
     if [[ $tx ]]; then
+      echo Adding $tx to pending list
       PENDING_TRANSACTIONS="${txs[@]} $tx"
       UPDATE_TIMESTAMP=$(date +%s)
     fi

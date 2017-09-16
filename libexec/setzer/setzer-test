@@ -1,6 +1,19 @@
 #!/usr/bin/env bash
-#set -e
+set -e
 #set -x
+
+if ! [[ $SETZER_BOT_INIT ]]; then
+  export SETZER_BOT_INIT=1
+  conf="/home/nanexcool/makerdao/setzer/default.conf"
+  [[ -e $conf ]] && . $conf
+  #export var2=$var2
+fi
+[[ $var2 ]] && echo $var2
+echo $var2
+
+sleep 5;
+exec "$0" "$@"
+exit
 
 wrap() {
   res=$(${@} 2> /dev/null)
