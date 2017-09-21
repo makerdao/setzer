@@ -1,5 +1,5 @@
 NAME
-   setzer -- manipulate feeds
+   setzer -- manipulate feeds and update data
 
 SYNOPSIS
    setzer [<options>] <command> [<args>]
@@ -15,13 +15,52 @@ DEPENDENCIES
    jshon(1)        https://github.com/mbrock/jshon/
 
 COMMANDS
-   help            print help about setzer(1) or one of its subcommands
-   price           print ether price in USD from Coinmarketcap
-   read            print formatted value of a feed
-   update          
+   compute               get what the medianizer value would be if updated
+   expires               get expiration in seconds (< 0 means expired)
+   help                  print help about setzer(1) or one of its subcommands
+   peek                  peek a dsvalue, dscache or medianizer
+   poke                  update a dsvalue, dscache or medianizer
+   poker                 update a poker
+   post                  update a ds-price
+   price-bitbay          get ether price in USD from bitbay
+   price-bitfinex        get ether price in USD from bitfinex
+   price-bittrex         get ether price in USD from bittrex
+   price-btce            get ether price in USD from btc-e
+   price-cex             get ether price in USD from cex
+   price-coinbase        get ether price in USD from coinbase
+   price-coinmarketcap   get ether price in USD from coinmarketcap
+   price-cryptocompare   get ether price in USD from cryptocompare
+   price-etherscan       get ether price in USD from etherscan
+   price-gdax            get ether price in USD from gdax
+   price-gemini          get ether price in USD from gemini
+   price-hitbtc          get ether price in USD from hitbtc
+   price-kraken          get ether price in USD from kraken
+   price-livecoin        get ether price in USD from livecoin
+   price-ls              list all prices
+   price-poloniex        get ether price in USD from poloniex
+   price-yobit           get ether price in USD from yobit
+   prod                  update a ds-cache
+   read                  read a dsvalue, dscache or medianizer
+   set                   update a ds-cache
+   spread                get ether price and spread dsvalue
+   valid                 check if a dsvalue, dscache or medianizer has a value
+   volume-bitbay         get ether volume in USD from bitbay
+   volume-bitfinex       get ether volume in USD from bitfinex
+   volume-bittrex        get ether volume in USD from bittrex
+   volume-btce           get ether volume in USD from btc-e
+   volume-cex            get ether volume in USD from cex
+   volume-gdax           get ether volume in USD from gdax
+   volume-gemini         get ether volume in USD from gemini
+   volume-hitbtc         get ether volume in USD from hitbtc
+   volume-kraken         get ether volume in USD from kraken
+   volume-livecoin       get ether volume in USD from livecoin
+   volume-ls             list all volumes
+   volume-poloniex       get ether volume in USD from poloniex
+   volume-yobit          get ether volume in USD from yobit
 
 OPTIONS
    -F, --from=<sender>        account to send transaction from
    -G, --gas=<number>         number of units of gas to provide
+   -S, --spread=<number>      minimum spread needed to change value
 
 Report bugs to <https://github.com/makerdao/setzer/issues>.
