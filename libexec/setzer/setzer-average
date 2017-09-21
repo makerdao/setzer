@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### setzer-average -- get average price of 2 or more <source>
+### setzer-average -- get average price of 2 or more price <source>
 ### Usage: setzer average <source1> <source2> ... <sourceN>
 ###
 ### Return average price of 2 or more price <source>
