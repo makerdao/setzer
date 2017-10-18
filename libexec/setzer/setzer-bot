@@ -20,11 +20,11 @@ if ! [[ $SETZER_BOT_INIT ]]; then
   
   [[ $errors ]] && { printf '%s\n' "${errors[@]}"; exit 1; }
 
-  [[ $SETZER_SPREAD ]] || export SETZER_SPREAD=.3
+  [[ $SETZER_SPREAD ]] || export SETZER_SPREAD=1
 
-  [[ $SETZER_LOOP_SECONDS ]] || export SETZER_LOOP_SECONDS=15
+  [[ $SETZER_LOOP_SECONDS ]] || export SETZER_LOOP_SECONDS=60
 
-  [[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=30
+  [[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=60
 
   [[ $SETZER_AUTO || $1 = --auto ]] && { export SETZER_AUTO=yes; echo AUTO mode ON; }
   
