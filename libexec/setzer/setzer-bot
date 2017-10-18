@@ -10,6 +10,9 @@
 if ! [[ $SETZER_BOT_INIT ]]; then
   export SETZER_BOT_INIT=1
   export SETH_ASYNC=yes
+
+  [[ -e /etc/setzer.conf ]] && . /etc/setzer.conf
+
   echo "--------- STARTING SETZER BOT ---------"
   echo "Bot started `date`"
   
@@ -24,14 +27,14 @@ if ! [[ $SETZER_BOT_INIT ]]; then
 
   [[ $SETZER_LOOP_SECONDS ]] || export SETZER_LOOP_SECONDS=60
 
-  [[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=60
+  [[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=90
 
   [[ $SETZER_AUTO || $1 = --auto ]] && { export SETZER_AUTO=yes; echo AUTO mode ON; }
   
   # TODO: these should be automatic
   # maybe have SETZER_MAX_GAS_PRICE
   export ETH_GAS_PRICE=`seth --to-wei .5 gwei`
-  export ETH_GAS=180000
+  export ETH_GAS=150000
 
   echo "Default account:    $ETH_FROM"
   echo "Feed address:       $SETZER_FEED"
@@ -64,7 +67,7 @@ else
     export CURRENT_LOOP=$(($CURRENT_LOOP + 1))
     # increase gas price
     needsupdate="yes"
-    newgasprice=$(seth --to-wei .5 gwei)
+    newgasprice=`seth --to-wei .5 gwei`
     export ETH_GAS_PRICE=$(($ETH_GAS_PRICE + $newgasprice))
     echo "New gas price: $ETH_GAS_PRICE"
   fi
@@ -94,6 +97,7 @@ until=$(date +%s -d'+6 hour')
 if [[ $needsupdate ]]; then
   [[ ! $SETZER_AUTO ]] && read -r -p "Are you sure? [y/N] " response
   if [[ $SETZER_AUTO || "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
+    CURRENT_LOOP=1
     nonce=$(seth nonce "$ETH_FROM")
     export ETH_NONCE=$nonce
     echo "Sending with nonce $ETH_NONCE"
