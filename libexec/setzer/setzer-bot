@@ -18,20 +18,20 @@ if ! [[ $SETZER_BOT_INIT ]]; then
   [[ $SETZER_MEDIANIZER ]] || errors+=("No medianizer set. Please set it via SETZER_MEDIANIZER ")
   [[ $SETZER_SOURCES ]] || errors+=("No price sources set. Please set them via SETZER_SOURCES ")
   
-  #[[ $errors ]] && { printf '%s\n' "${errors[@]}"; exit 1; }
+  [[ $errors ]] && { printf '%s\n' "${errors[@]}"; exit 1; }
 
-  [[ $SETZER_SPREAD ]] || export SETZER_SPREAD=.5
+  [[ $SETZER_SPREAD ]] || export SETZER_SPREAD=1
 
   [[ $SETZER_LOOP_SECONDS ]] || export SETZER_LOOP_SECONDS=60
 
-  [[ $SETZER_LOOPS_BETWEEN_PRICE_INCREASE ]] || export SETZER_LOOPS_BETWEEN_PRICE_INCREASE=4
+  [[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=240
 
   [[ $SETZER_AUTO || $1 = --auto ]] && { export SETZER_AUTO=yes; echo AUTO mode ON; }
   
   # TODO: these should be automatic
   # maybe have SETZER_MAX_GAS_PRICE
-  export ETH_GAS_PRICE=`seth --to-wei 1 gwei`
-  export ETH_GAS=200000
+  export ETH_GAS_PRICE=`seth --to-wei .5 gwei`
+  export ETH_GAS=180000
 
   echo "Default account:    $ETH_FROM"
   echo "Feed address:       $SETZER_FEED"
@@ -52,35 +52,36 @@ if [[ ${#txs[@]} -gt 0 ]]; then
   echo "Found ${#txs[@]} pending transactions"
   for x in "${txs[@]}";
   do
-      echo "Checking status of tx $x"
-      res=$(seth receipt "$x" blockNumber) || true
-      [[ $res ]] && { mined=$x; break; }
+    echo "Checking status of tx $x"
+    res=$(seth receipt "$x" blockNumber 2> /dev/null) || true
+    [[ $res ]] && { mined=$x; break; }
   done
 fi
 
 #  
 if [[ $mined ]]; then
-    #reset gas
-    echo "Tx $mined was mined successfully."
-    echo "Reset gas price to 1 gwei"
-    now=$(date +%s)
-    how_long=$(setzer --format $(($now - $UPDATE_TIMESTAMP)))
-    echo Update took $how_long
-    UPDATE_TIMESTAMP=
-    PENDING_TRANSACTIONS=
-    export ETH_GAS_PRICE=`seth --to-wei 1 gwei`
+  #reset gas
+  echo "Tx $mined was mined successfully."
+  echo "Reset gas price to .5 gwei"
+  now=$(date +%s)
+  how_long=$(setzer --format $(($now - $UPDATE_TIMESTAMP)))
+  echo Update took $how_long
+  UPDATE_TIMESTAMP=
+  export PENDING_TRANSACTIONS=
+  export ETH_GAS_PRICE=`seth --to-wei .5 gwei`
 else
-    if [[ ${#txs[@]} -gt 0 ]]; then
-        # increase gas price
-        newgasprice=$(seth --to-wei 1 gwei)
-        export ETH_GAS_PRICE=$(($ETH_GAS_PRICE + $newgasprice))
-        echo "New gas price: $ETH_GAS_PRICE"
-    fi
+  if [[ ${#txs[@]} -gt 0 ]]; then
+    export CURRENT_LOOP=$(($CURRENT_LOOP + 1))
+
+    # increase gas price
+    newgasprice=$(seth --to-wei .5 gwei)
+    export ETH_GAS_PRICE=$(($ETH_GAS_PRICE + $newgasprice))
+    echo "New gas price: $ETH_GAS_PRICE"
+  fi
 fi
 
 gas=$(seth gas-price)
-echo "Current gas price:  $gas wei"
-[[ $gas -gt 21000000000 ]] && echo "WARNING: Higher than normal gas price"
+[[ $gas -gt 21000000000 ]] && echo "WARNING: Higher than normal gas price ($gas gwei)"
 
 
 
@@ -96,8 +97,6 @@ old=${old[0]}
 new=$(setzer average $SETZER_SOURCES)
 spread=$(setzer spread "$old" "$new")
 echo "Old ($old) New ($new) Spread ($spread)"
-echo $spread
-echo $SETZER_SPREAD
 test=$(bc <<< "${spread#-} >= ${SETZER_SPREAD}")
 
 if [[ ${test} -ne 0 ]]; then
