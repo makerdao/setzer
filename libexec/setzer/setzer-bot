@@ -20,11 +20,11 @@ if ! [[ $SETZER_BOT_INIT ]]; then
   
   [[ $errors ]] && { printf '%s\n' "${errors[@]}"; exit 1; }
 
-  [[ $SETZER_SPREAD ]] || export SETZER_SPREAD=1
+  [[ $SETZER_SPREAD ]] || export SETZER_SPREAD=.3
 
-  [[ $SETZER_LOOP_SECONDS ]] || export SETZER_LOOP_SECONDS=60
+  [[ $SETZER_LOOP_SECONDS ]] || export SETZER_LOOP_SECONDS=15
 
-  [[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=240
+  [[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=30
 
   [[ $SETZER_AUTO || $1 = --auto ]] && { export SETZER_AUTO=yes; echo AUTO mode ON; }
   
@@ -47,49 +47,34 @@ chain=$(seth gas-price 2> /dev/null)
 [[ $chain ]] || { echo Not connected to Ethereum, retry in 30 seconds...; sleep 30; exec "$0" "$@"; }
 
 # Check if we have transactions pending
-txs=($PENDING_TRANSACTIONS)
-if [[ ${#txs[@]} -gt 0 ]]; then
-  echo "Found ${#txs[@]} pending transactions"
-  for x in "${txs[@]}";
-  do
-    echo "Checking status of tx $x"
-    res=$(seth receipt "$x" blockNumber 2> /dev/null) || true
-    [[ $res ]] && { mined=$x; break; }
-  done
+ptn=$PENDING_TRANSACTION_NONCE
+if [[ $ptn ]]; then
+  nonce=$(seth nonce $ETH_FROM)
+  [[ "$nonce" -gt "$ptn"  ]] && mined="yes"
 fi
 
 #  
 if [[ $mined ]]; then
   #reset gas
-  echo "Tx $mined was mined successfully."
-  echo "Reset gas price to .5 gwei"
-  now=$(date +%s)
-  how_long=$(setzer --format $(($now - $UPDATE_TIMESTAMP)))
-  echo Update took $how_long
-  UPDATE_TIMESTAMP=
-  export PENDING_TRANSACTIONS=
+  echo "Feed updated successfully. Gas price was $ETH_GAS_PRICE gwei"
+  export PENDING_TRANSACTION_NONCE=
   export ETH_GAS_PRICE=`seth --to-wei .5 gwei`
 else
-  if [[ ${#txs[@]} -gt 0 ]]; then
+  if [[ $ptn ]]; then
     export CURRENT_LOOP=$(($CURRENT_LOOP + 1))
-
     # increase gas price
+    needsupdate="yes"
     newgasprice=$(seth --to-wei .5 gwei)
     export ETH_GAS_PRICE=$(($ETH_GAS_PRICE + $newgasprice))
     echo "New gas price: $ETH_GAS_PRICE"
   fi
 fi
 
-gas=$(seth gas-price)
-[[ $gas -gt 21000000000 ]] && echo "WARNING: Higher than normal gas price ($gas gwei)"
-
-
-
 expires=$(setzer expires "$SETZER_FEED")
 echo Expires in `setzer --format "$expires"`
 if [ "$expires" -lt 3600 ]; then
   echo "Expires in less than an hour, will update."
-  needsupdate=true
+  needsupdate="yes"
 fi
 
 old=($(setzer peek "$SETZER_FEED"))
@@ -114,16 +99,16 @@ if [[ $needsupdate ]]; then
     echo "Sending with nonce $ETH_NONCE"
     tx=$(setzer post "$SETZER_FEED" "$new" "$until" "$SETZER_MEDIANIZER")
     if [[ $tx ]]; then
-      echo Adding $tx to pending list
-      PENDING_TRANSACTIONS="${txs[@]} $tx"
-      UPDATE_TIMESTAMP=$(date +%s)
+      export PENDING_TRANSACTION_NONCE=$nonce
     fi
   fi
 fi
 
-export PENDING_TRANSACTIONS=$PENDING_TRANSACTIONS
-export UPDATE_TIMESTAMP=$UPDATE_TIMESTAMP
-
-echo Waiting "$SETZER_LOOP_SECONDS" seconds
-sleep $SETZER_LOOP_SECONDS
+if [ $PENDING_TRANSACTION_NONCE ]; then
+  wait=$SETZER_WAIT_FOR_RESEND
+else
+  wait=$SETZER_LOOP_SECONDS
+fi
+echo Waiting "$wait" seconds
+sleep $wait
 exec "$0" "$@"
