@@ -99,6 +99,7 @@ if [[ $needsupdate ]]; then
     echo "Sending with nonce $ETH_NONCE"
     tx=$(setzer post "$SETZER_FEED" "$new" "$until" "$SETZER_MEDIANIZER")
     if [[ $tx ]]; then
+      echo $tx
       export PENDING_TRANSACTION_NONCE=$nonce
     fi
   fi
