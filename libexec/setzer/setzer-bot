@@ -59,7 +59,7 @@ fi
 #  
 if [[ $mined ]]; then
   #reset gas
-  echo "Feed updated successfully. Gas price was $ETH_GAS_PRICE gwei"
+  echo "Feed updated successfully. Gas price was $ETH_GAS_PRICE wei"
   export PENDING_TRANSACTION_NONCE=
   export ETH_GAS_PRICE=`seth --to-wei .5 gwei`
 else
