@@ -45,33 +45,14 @@ if ! [[ $SETZER_BOT_INIT ]]; then
 fi
 
 # Check if connected to node
-# TODO: use something other than gas price
-chain=$(seth gas-price 2> /dev/null)
-[[ $chain ]] || { echo Not connected to Ethereum, retry in 30 seconds...; sleep 30; exec "$0" "$@"; }
-
-# Check if we have transactions pending
-ptn=$PENDING_TRANSACTION_NONCE
-if [[ $ptn ]]; then
-  nonce=$(seth nonce $ETH_FROM)
-  [[ "$nonce" -gt "$ptn"  ]] && mined="yes"
-fi
-
-#  
-if [[ $mined ]]; then
-  #reset gas
-  echo "Feed updated successfully. Gas price was $ETH_GAS_PRICE wei"
-  export PENDING_TRANSACTION_NONCE=
-  export ETH_GAS_PRICE=`seth --to-wei .5 gwei`
-else
-  if [[ $ptn ]]; then
-    export CURRENT_LOOP=$(($CURRENT_LOOP + 1))
-    # increase gas price
-    needsupdate="yes"
-    newgasprice=`seth --to-wei .5 gwei`
-    export ETH_GAS_PRICE=$(($ETH_GAS_PRICE + $newgasprice))
-    echo "New gas price: $ETH_GAS_PRICE"
-  fi
-fi
+syncing=$(seth rpc eth_syncing 2> /dev/null)
+peers=$(seth rpc net_peerCount 2> /dev/null)
+blockNumber=$(seth block latest number 2> /dev/null || true)
+echo $syncing
+echo $peers
+echo $blockNumber
+[[ $syncing == "false" ]] && [[ $peers -gt 0 ]] && [[ $blockNumber -gt 0 ]] || { echo Not connected to Ethereum, retry in 1 seconds...; sleep 1; exec "$0" "$@"; }
+exit;
 
 expires=$(setzer expires "$SETZER_FEED")
 echo Expires in `setzer --format "$expires"`
@@ -92,7 +73,28 @@ if [[ ${test} -ne 0 ]]; then
   echo "Spread larger than $SETZER_SPREAD, will update."
 fi
 
-until=$(date +%s -d'+6 hour')
+# Check if we have transactions pending
+ptn=$PENDING_TRANSACTION_NONCE
+if [[ $ptn ]]; then
+  nonce=$(seth nonce $ETH_FROM)
+  [[ "$nonce" -gt "$ptn"  ]] && mined="yes"
+fi
+
+if [[ $mined ]]; then
+  #reset gas
+  echo "Feed updated successfully. Gas price was $ETH_GAS_PRICE wei"
+  export PENDING_TRANSACTION_NONCE=
+  export ETH_GAS_PRICE=`seth --to-wei .5 gwei`
+else
+  if [[ $ptn ]]; then
+    export CURRENT_LOOP=$(($CURRENT_LOOP + 1))
+    # increase gas price
+    needsupdate="yes"
+    newgasprice=`seth --to-wei .5 gwei`
+    export ETH_GAS_PRICE=$(($ETH_GAS_PRICE + $newgasprice))
+    echo "New gas price: $ETH_GAS_PRICE"
+  fi
+fi
 
 if [[ $needsupdate ]]; then
   [[ ! $SETZER_AUTO ]] && read -r -p "Are you sure? [y/N] " response
@@ -100,6 +102,7 @@ if [[ $needsupdate ]]; then
     CURRENT_LOOP=1
     nonce=$(seth nonce "$ETH_FROM")
     export ETH_NONCE=$nonce
+    until=$(date +%s -d'+6 hour')
     echo "Sending with nonce $ETH_NONCE"
     tx=$(setzer post "$SETZER_FEED" "$new" "$until" "$SETZER_MEDIANIZER")
     if [[ $tx ]]; then
