@@ -48,7 +48,7 @@ fi
 syncing=$(seth rpc eth_syncing 2> /dev/null)
 peers=$(seth rpc net_peerCount 2> /dev/null)
 blockNumber=$(seth block latest number 2> /dev/null || true)
-sanity=($(setzer peek "$SETZER_FEED"))
+sanity=($(setzer peek "$SETZER_FEED" 2> /dev/null || true))
 [[ $syncing == "false" ]] && [[ $peers -gt 0 ]] && [[ $blockNumber -gt 0 ]] && [[ $sanity ]] || { echo Not connected to Ethereum, retry in 1 seconds...; sleep 1; exec "$0" "$@"; }
 
 expires=$(setzer expires "$SETZER_FEED")
