@@ -5,8 +5,8 @@
 ### Instructions very soon
 #set -ex
 
-log () {
-  echo [$(date "+%F %T")] $@
+function log {
+  echo "[$(date --rfc-3339=seconds)]: $*"
 }
 
 # Initialization
