@@ -38,7 +38,7 @@ if ! [[ $SETZER_BOT_INIT ]]; then
   # TODO: these should be automatic
   # maybe have SETZER_MAX_GAS_PRICE
   export ETH_GAS_PRICE=`seth --to-wei .5 gwei`
-  export ETH_GAS=150000
+  export ETH_GAS=200000
 
   echo "Default account:    $ETH_FROM"
   echo "Feed address:       $SETZER_FEED"
