@@ -5,6 +5,20 @@
 ###
 ### Manipulate feeds and update data
 
+OPTS="setzer [<options>] <command> [<args>]
+setzer <command> --help
+--
+  Connection options:
+rpc-host=host        JSON-RPC host (default: \`localhost')
+rpc-port=port        JSON-RPC port (default: \`8545')
+
+  Transaction options:
+C,config=file        configuration file
+
+  Options for seth-send(1):
+auto                 use the calldata to create a new object
+"
+
 set -e
 
 if ! [[ $SETZER_INIT ]]; then
@@ -18,5 +32,19 @@ if [[ $2 = --help ]]; then
 elif [[ $1 = -* ]] && which "${0##*/}-$1" &>/dev/null; then
   exec "${0##*/}-$1" "${@:2}"
 fi
+
+eval "$(git rev-parse --parseopt -- "$@" <<<"$OPTS" || echo exit $?)"
+
+while [[ $1 ]]; do
+  case $1 in
+    --)              shift; break;;
+
+    -C|--config)     shift; export SETZER_CONF=$1;;
+
+       --auto)              export SETZER_AUTO=yes;;
+
+    *) printf "${0##*/}: internal error: %q\n" "$1"; exit 1
+  esac; shift
+done
 
 "${0##*/}-${1-help}" "${@:2}"

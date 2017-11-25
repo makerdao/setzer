@@ -15,7 +15,12 @@ if ! [[ $SETZER_BOT_INIT ]]; then
   export SETZER_BOT_INIT=1
   export SETH_ASYNC=yes
 
+  # Global configuration
   [[ -e /etc/setzer.conf ]] && . /etc/setzer.conf
+  
+  # Local configuration (via -C or --config)
+  # Useful for running multiple bots on one box
+  [[ -e $SETZER_CONF ]] && . $SETZER_CONF
 
   echo "--------- STARTING SETZER BOT ---------"
   echo "Bot started `date`"
@@ -27,18 +32,23 @@ if ! [[ $SETZER_BOT_INIT ]]; then
   
   [[ $errors ]] && { printf '%s\n' "${errors[@]}"; exit 1; }
 
+
   [[ $SETZER_SPREAD ]] || export SETZER_SPREAD=1
 
   [[ $SETZER_LOOP_SECONDS ]] || export SETZER_LOOP_SECONDS=60
 
   [[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=90
 
-  [[ $SETZER_AUTO || $1 = --auto ]] && { export SETZER_AUTO=yes; echo AUTO mode ON; }
+  [[ $SETZER_AUTO ]] && echo AUTO mode ON
   
   # TODO: these should be automatic
-  # maybe have SETZER_MAX_GAS_PRICE
   export ETH_GAS_PRICE=`seth --to-wei .5 gwei`
-  export ETH_GAS=200000
+
+  # NOTE: Nice way to see if bots are updated. Increase this by 1 on new versions :)
+  export ETH_GAS=200001
+
+  export SETZER_GAS_PRICE_INCREMENT=`seth --to-wei .5 gwei`
+  export SETZER_MAX_GAS_PRICE=`seth --to-wei 5 gwei`
 
   echo "Default account:    $ETH_FROM"
   echo "Feed address:       $SETZER_FEED"
@@ -90,10 +100,15 @@ else
   if [[ $ptn ]]; then
     export CURRENT_LOOP=$(($CURRENT_LOOP + 1))
     # increase gas price
-    needsupdate="yes"
-    newgasprice=`seth --to-wei .5 gwei`
-    export ETH_GAS_PRICE=$(($ETH_GAS_PRICE + $newgasprice))
-    log "New gas price: $ETH_GAS_PRICE"
+    newgasprice=$(($ETH_GAS_PRICE + $SETZER_GAS_PRICE_INCREMENT))
+    if [[ $newgasprice -le $SETZER_MAX_GAS_PRICE ]]; then
+      export ETH_GAS_PRICE=$newgasprice
+      log "New gas price: $ETH_GAS_PRICE"
+      needsupdate="yes"
+    else
+      log "Max gas price reached ($SETZER_MAX_GAS_PRICE)... What to do?"
+      needsupdate=
+    fi
   fi
 fi
 
@@ -101,6 +116,7 @@ if [[ $needsupdate ]]; then
   [[ ! $SETZER_AUTO ]] && read -r -p "Are you sure? [y/N] " response
   if [[ $SETZER_AUTO || "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
     CURRENT_LOOP=1
+    # TODO: check if $PENDING_TRANSACTION_NONCE
     nonce=$(seth nonce "$ETH_FROM")
     export ETH_NONCE=$nonce
     until=$(date +%s -d'+6 hour')
