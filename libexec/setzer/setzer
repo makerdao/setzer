@@ -8,15 +8,10 @@
 OPTS="setzer [<options>] <command> [<args>]
 setzer <command> --help
 --
-  Connection options:
-rpc-host=host        JSON-RPC host (default: \`localhost')
-rpc-port=port        JSON-RPC port (default: \`8545')
-
-  Transaction options:
+  Options:
 C,config=file        configuration file
-
-  Options for seth-send(1):
-auto                 use the calldata to create a new object
+W,wait=seconds       seconds to wait between checks (default: 60)
+auto                 run automatically without user intervention
 "
 
 set -e
@@ -40,6 +35,7 @@ while [[ $1 ]]; do
     --)              shift; break;;
 
     -C|--config)     shift; export SETZER_CONF=$1;;
+    -W|--wait)       shift; export SETZER_LOOP_SECONDS=$1;;
 
        --auto)              export SETZER_AUTO=yes;;
 

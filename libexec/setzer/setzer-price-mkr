@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+json=$(curl -sS "https://mkr.tools/api/mkr/latest")
+price=$(jshon <<<"$json" -e priceUSD -u)
+echo $price
