@@ -6,9 +6,12 @@
    `setzer <command> --help`
 
 # INSTALLATION
-   
+
+   |                |                                        |
+   |----------------|----------------------------------------| 
    |`make link`     |  install setzer(1) into `/usr/local`   |  
    |`make uninstall`|  uninstall setzer(1) from `/usr/local` |
+
 # SETUP
   setzer expects a `/etc/setzer.conf` file that looks like this:
 
