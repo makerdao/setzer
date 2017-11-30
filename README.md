@@ -9,7 +9,20 @@
    `make link`       install setzer(1) into /usr/local  
    `make uninstall`  uninstall setzer(1) from /usr/local
 # SETUP
-   
+  setzer expects a `/etc/setzer.conf` file that looks like this:
+
+```bash
+  export ETH_FROM="YOUR ACCOUNT"
+  export SETZER_FEED="YOUR PRICE-FEED ADDRESS"
+  export SETZER_MEDIANIZER="0x729D19f657BD0614b4985Cf1D82531c67569197B"
+  export SETZER_SOURCES="LIST OF PRICE SOURCES"
+  
+  #LIST OF RPC PORTS TO CONNECT TO
+  export RPC_PORTS="8545"
+  
+  #TIME TO WAIT FOR A NODE TO RESPOND
+  export RPC_TIMEOUT=5s
+```
 # DEPENDENCIES
    seth(1)         https://github.com/dapphub/seth  
    curl(1)         https://curl.haxx.se/  
