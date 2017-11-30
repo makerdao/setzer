@@ -61,11 +61,12 @@ fi
 # Check if connected to node
 for PORT in ${RPC_PORTS:-8545}; do
   export ETH_RPC_PORT=$PORT
-  syncing=$(timeout $RPC_TIMEOUT seth rpc eth_syncing 2> /dev/null)
-  peers=$(timeout $RPC_TIMEOUT seth rpc net_peerCount 2> /dev/null)
-  blockNumber=$(timeout $RPC_TIMEOUT seth block latest number 2> /dev/null || true)
-  sanity=($(timeout $RPC_TIMEOUT setzer peek "$SETZER_FEED" 2> /dev/null || true))
-  [[ $syncing == "false" ]] && [[ $peers -gt 0 ]] && [[ $blockNumber -gt 0 ]] && [[ $sanity ]] && running_client=1  && break 
+  syncing=$(timeout $RPC_TIMEOUT seth rpc eth_syncing 2> /dev/null) \
+	  && peers=$(timeout $RPC_TIMEOUT seth rpc net_peerCount 2> /dev/null) \
+	  && blockNumber=$(timeout $RPC_TIMEOUT seth block latest number 2> /dev/null || true) \
+	  && sanity=($(timeout $RPC_TIMEOUT setzer peek "$SETZER_FEED" 2> /dev/null || true))
+  [[ $syncing == "false" ]] && [[ $peers -gt 0 ]] && [[ $blockNumber -gt 0 ]] && [[ $sanity ]] \
+	  && running_client=1  && break 
 done
 
 if [ "${running_client:-0}" -ne 1 ]; then
@@ -73,6 +74,7 @@ if [ "${running_client:-0}" -ne 1 ]; then
  sleep 5
  exec "$0" "$@"
 fi
+log "Node running on RPC port $ETH_RPC_PORT."
 expires=$(setzer expires "$SETZER_FEED")
 log "Expires in `setzer --format "$expires"`"
 if [ "$expires" -lt 3600 ]; then
