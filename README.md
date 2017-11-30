@@ -7,7 +7,7 @@
 
 # INSTALLATION
 
-   |                |                                        |
+   | command        |  description                           |
    |----------------|----------------------------------------| 
    |`make link`     |  install setzer(1) into `/usr/local`   |  
    |`make uninstall`|  uninstall setzer(1) from `/usr/local` |
