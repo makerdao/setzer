@@ -1,5 +1,5 @@
 # NAME
-   setzer -- manipulate feeds and update data
+   `setzer` -- manipulate feeds and update data
 
 # SYNOPSIS
    `setzer <command> [<args>]`  
@@ -8,14 +8,15 @@
 # INSTALLATION
    `make link`       install setzer(1) into /usr/local  
    `make uninstall`  uninstall setzer(1) from /usr/local
-
+# SETUP
+   
 # DEPENDENCIES
    seth(1)         https://github.com/dapphub/seth  
    curl(1)         https://curl.haxx.se/  
    jshon(1)        https://github.com/mbrock/jshon/
 
 # COMMANDS
-   `average`         get average price of 2 or more price <source>  
+   `average`|         get average price of 2 or more price <source>  
    `bot`             really cool bot  
    `compute`         get what the medianizer value would be if updated  
    `expires`         get expiration in seconds (< 0 means expired)  
