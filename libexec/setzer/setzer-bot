@@ -59,12 +59,20 @@ if ! [[ $SETZER_BOT_INIT ]]; then
 fi
 
 # Check if connected to node
-syncing=$(seth rpc eth_syncing 2> /dev/null)
-peers=$(seth rpc net_peerCount 2> /dev/null)
-blockNumber=$(seth block latest number 2> /dev/null || true)
-sanity=($(setzer peek "$SETZER_FEED" 2> /dev/null || true))
-[[ $syncing == "false" ]] && [[ $peers -gt 0 ]] && [[ $blockNumber -gt 0 ]] && [[ $sanity ]] || { log "Not connected to Ethereum, retry in 5 seconds..."; sleep 5; exec "$0" "$@"; }
+for PORT in ${RPC_PORTS:-8545}; do
+  export ETH_RPC_PORT=$PORT
+  syncing=$(timeout $RPC_TIMEOUT seth rpc eth_syncing 2> /dev/null)
+  peers=$(timeout $RPC_TIMEOUT seth rpc net_peerCount 2> /dev/null)
+  blockNumber=$(timeout $RPC_TIMEOUT seth block latest number 2> /dev/null || true)
+  sanity=($(timeout $RPC_TIMEOUT setzer peek "$SETZER_FEED" 2> /dev/null || true))
+  [[ $syncing == "false" ]] && [[ $peers -gt 0 ]] && [[ $blockNumber -gt 0 ]] && [[ $sanity ]] && running_client=1  && break 
+done
 
+if [ "${running_client:-0}" -ne 1 ]; then
+ log "Not connected to Ethereum, retry in 5 seconds..."
+ sleep 5
+ exec "$0" "$@"
+fi
 expires=$(setzer expires "$SETZER_FEED")
 log "Expires in `setzer --format "$expires"`"
 if [ "$expires" -lt 3600 ]; then
