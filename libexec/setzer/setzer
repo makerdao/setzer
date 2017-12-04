@@ -12,6 +12,11 @@ setzer <command> --help
 C,config=file        configuration file
 W,wait=seconds       seconds to wait between checks (default: 60)
 auto                 run automatically without user intervention
+
+  Gas options:
+gas-start=gas        starting gas price per tx in Gwei
+gas-inc=gas          amount to increment gas price per tx in Gwei
+gas-max=gas          maximum gas price to pay per tx in Gwei
 "
 
 set -e
@@ -38,6 +43,10 @@ while [[ $1 ]]; do
     -W|--wait)       shift; export SETZER_LOOP_SECONDS=$1;;
 
        --auto)              export SETZER_AUTO=yes;;
+
+       --gas-start)  shift; export SETZER_INITIAL_GAS_PRICE=$1;;
+       --gas-inc)    shift; export SETZER_GAS_PRICE_INCREMENT=$1;;
+       --gas-max)    shift; export SETZER_MAX_GAS_PRICE=$1;;
 
     *) printf "${0##*/}: internal error: %q\n" "$1"; exit 1
   esac; shift
