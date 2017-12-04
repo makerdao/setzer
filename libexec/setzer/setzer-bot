@@ -78,8 +78,10 @@ if ! [[ $SETZER_BOT_INIT ]]; then
 fi
 
 # Check if connected to node
+export RPC_TIMEOUT=${RPC_TIMEOUT:-15s}
 for PORT in ${RPC_PORTS:-8545}; do
   export ETH_RPC_PORT=$PORT
+  log "Trying on rpc port $ETH_RPC_PORT."
   syncing=$(timeout $RPC_TIMEOUT seth rpc eth_syncing 2> /dev/null) \
 	  && peers=$(timeout $RPC_TIMEOUT seth rpc net_peerCount 2> /dev/null) \
 	  && blockNumber=$(timeout $RPC_TIMEOUT seth block latest number 2> /dev/null || true) \

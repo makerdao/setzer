@@ -25,10 +25,12 @@
   
   #setzer can connect to multiple nodes listed here
   #Space separated list of nodes' rpc ports to connect to
+  #default 8545
   export RPC_PORTS="8545"
   
   #Time to wait for a node to respond
-  export RPC_TIMEOUT=5s
+  #defaults to 15s
+  export RPC_TIMEOUT=15s
 ```
 # DEPENDENCIES
    seth(1)         https://github.com/dapphub/seth  
