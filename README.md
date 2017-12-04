@@ -47,7 +47,7 @@
   export SETZER_SOURCES="LIST OF PRICE SOURCES"
   
   #setzer tries to create a price update transaction with increasing gas price to 
-  #make sure it gets mined. Starts fom $SETZER_INITIAL_GAS_PRICE with $SETZER_GAS_PRICE_INCREMENT 
+  #make sure it gets mined. Starts from $SETZER_INITIAL_GAS_PRICE with $SETZER_GAS_PRICE_INCREMENT 
   #until $SETZER_MAX_GAS_PRICE. 
  
   #initial gas price in Wei
@@ -59,16 +59,19 @@
   #max gas price in Wei
   export SETZER_MAX_GAS_PRICE=`seth --to-wei 26 gwei`
   
-  #spread between current price and last price update price in percentage
+  #spread between current price and last update price in percentage
   export SETZER_SPREAD=1
 
   #Seconds to wait between two price fetches
   export SETZER_INTERVAL_SECONDS=60
 
   #Seconds to wait for price update transaction to execute on blockchain
+  # before retrying with higher gas price
   export SETZER_WAIT_FOR_RESEND=90
   
-  #auto mode 
+  #automatically update price if needed
+  # if set to 1 price will be auto updated if needed on the blockchain
+  # if set to '' (empty) price feed will update only if user enters 'y' 
   export SETZER_AUTO=1
 
   #setzer can connect to multiple nodes listed here
