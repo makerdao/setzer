@@ -4,7 +4,7 @@ After=multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/setzer bot --auto --gas-start 2000000000 --gas-inc 1000000000 --gas-max  25000000000
+ExecStart=/usr/local/bin/setzer bot --auto
 
 [Install]
 WantedBy=multi-user.target
