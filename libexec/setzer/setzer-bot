@@ -52,8 +52,8 @@ if ! [[ $SETZER_BOT_INIT ]]; then
   # Gas stuff
 
   [[ $SETZER_INITIAL_GAS_PRICE ]] || export SETZER_INITIAL_GAS_PRICE=`seth --to-wei 1 gwei`
-  [[ $SETZER_GAS_PRICE_INCREMENT ]] || export SETZER_GAS_PRICE_INCREMENT=`seth --to-wei 1 gwei`
-  [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=`seth --to-wei 10 gwei`
+  [[ $SETZER_GAS_PRICE_INCREMENT ]] || export SETZER_GAS_PRICE_INCREMENT=`seth --to-wei 5 gwei`
+  [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=`seth --to-wei 26 gwei`
   
   # TODO: these should be automatic
   export ETH_GAS_PRICE=$SETZER_INITIAL_GAS_PRICE
