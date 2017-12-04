@@ -45,15 +45,15 @@ if ! [[ $SETZER_BOT_INIT ]]; then
   [[ $SETZER_SPREAD ]] || export SETZER_SPREAD=1
 
   [[ $SETZER_INTERVAL_SECONDS ]] || export SETZER_INTERVAL_SECONDS=60
-  [[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=90
+  [[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=120
 
   [[ $SETZER_AUTO ]] && echo AUTO mode ON
 
   # Gas stuff
 
-  [[ $SETZER_INITIAL_GAS_PRICE ]] || export SETZER_INITIAL_GAS_PRICE=`seth --to-wei 1 gwei`
-  [[ $SETZER_GAS_PRICE_INCREMENT ]] || export SETZER_GAS_PRICE_INCREMENT=`seth --to-wei 1 gwei`
-  [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=`seth --to-wei 10 gwei`
+  [[ $SETZER_INITIAL_GAS_PRICE ]] || export SETZER_INITIAL_GAS_PRICE=`seth --to-wei 10 gwei`
+  [[ $SETZER_GAS_PRICE_INCREMENT ]] || export SETZER_GAS_PRICE_INCREMENT=`seth --to-wei 2 gwei`
+  [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=`seth --to-wei 21 gwei`
   
   # TODO: these should be automatic
   export ETH_GAS_PRICE=$SETZER_INITIAL_GAS_PRICE
