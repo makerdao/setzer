@@ -1,8 +1,17 @@
 #!/usr/bin/env bash
 ### setzer-bot -- really cool bot
-### Usage: setzer bot [--interactive]
-###
-### Instructions very soon
+### Usage: setzer bot [options]
+### --
+###   Options:
+### C,config=file        configuration file
+### I,interval=seconds   seconds to wait between price checks (default: 60)
+### R,resend=seconds     seconds to wait before resending tx (default: 90)
+### auto                 run automatically without user intervention
+### 
+###   Gas options:
+### gas-start=gas        starting gas price per tx in Gwei
+### gas-inc=gas          amount to increment gas price per tx in Gwei
+### gas-max=gas          maximum gas price to pay per tx in Gwei
 #set -ex
 
 function log {
@@ -35,26 +44,36 @@ if ! [[ $SETZER_BOT_INIT ]]; then
 
   [[ $SETZER_SPREAD ]] || export SETZER_SPREAD=1
 
-  [[ $SETZER_LOOP_SECONDS ]] || export SETZER_LOOP_SECONDS=60
-
+  [[ $SETZER_INTERVAL_SECONDS ]] || export SETZER_INTERVAL_SECONDS=60
   [[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=90
 
   [[ $SETZER_AUTO ]] && echo AUTO mode ON
+
+  # Gas stuff
+
+  [[ $SETZER_INITIAL_GAS_PRICE ]] || export SETZER_INITIAL_GAS_PRICE=`seth --to-wei 1 gwei`
+  [[ $SETZER_GAS_PRICE_INCREMENT ]] || export SETZER_GAS_PRICE_INCREMENT=`seth --to-wei 1 gwei`
+  [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=`seth --to-wei 10 gwei`
   
   # TODO: these should be automatic
-  export ETH_GAS_PRICE=`seth --to-wei .5 gwei`
+  export ETH_GAS_PRICE=$SETZER_INITIAL_GAS_PRICE
 
   # NOTE: Nice way to see if bots are updated. Increase this by 1 on new versions :)
-  export ETH_GAS=200001
+  export ETH_GAS=200002
 
-  export SETZER_GAS_PRICE_INCREMENT=`seth --to-wei .5 gwei`
-  export SETZER_MAX_GAS_PRICE=`seth --to-wei 5 gwei`
 
-  echo "Default account:    $ETH_FROM"
-  echo "Feed address:       $SETZER_FEED"
-  echo "Medianizer address: $SETZER_MEDIANIZER"
-  echo "Price sources:      $SETZER_SOURCES"
-  echo "Starting gas price: $ETH_GAS_PRICE wei"
+  echo "Default account:     $ETH_FROM"
+  echo "Feed address:        $SETZER_FEED"
+  echo "Medianizer address:  $SETZER_MEDIANIZER"
+  echo "Price sources:       $SETZER_SOURCES"
+  echo "Spread to update:    $SETZER_SPREAD %"
+  echo ""
+  echo "Starting gas price:  $SETZER_INITIAL_GAS_PRICE wei"
+  echo "Max gas price:       $SETZER_MAX_GAS_PRICE wei"
+  echo "Gas price increment: $SETZER_GAS_PRICE_INCREMENT wei"
+  echo ""
+  echo "Price check loop:    $SETZER_INTERVAL_SECONDS seconds"
+  echo "Resend tx loop  :    $SETZER_WAIT_FOR_RESEND seconds"
   echo "------- INITIALIZATION COMPLETE -------"
 fi
 
@@ -105,7 +124,7 @@ if [[ $mined ]]; then
   #reset gas
   log "SUCCESS! Feed updated. Gas price was $ETH_GAS_PRICE wei"
   export PENDING_TRANSACTION_NONCE=
-  export ETH_GAS_PRICE=`seth --to-wei .5 gwei`
+  export ETH_GAS_PRICE=$SETZER_INITIAL_GAS_PRICE
 else
   if [[ $ptn ]]; then
     export CURRENT_LOOP=$(($CURRENT_LOOP + 1))
@@ -142,7 +161,7 @@ fi
 if [ $PENDING_TRANSACTION_NONCE ]; then
   wait=$SETZER_WAIT_FOR_RESEND
 else
-  wait=$SETZER_LOOP_SECONDS
+  wait=$SETZER_INTERVAL_SECONDS
 fi
 log Waiting "$wait" seconds
 sleep $wait
