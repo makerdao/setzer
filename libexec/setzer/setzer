@@ -10,7 +10,9 @@ setzer <command> --help
 --
   Options:
 C,config=file        configuration file
-W,wait=seconds       seconds to wait between checks (default: 60)
+I,interval=seconds   seconds to wait between checks (default: 60)
+R,resend=seconds     seconds to wait before resending tx (default: 90)
+S,spread=percent     minimum percent deviation to update (default: 1)
 auto                 run automatically without user intervention
 
   Gas options:
@@ -38,11 +40,15 @@ eval "$(git rev-parse --parseopt -- "$@" <<<"$OPTS" || echo exit $?)"
 while [[ $1 ]]; do
   case $1 in
     --)              shift; break;;
+    
+       --auto)              export SETZER_AUTO=yes;;
 
     -C|--config)     shift; export SETZER_CONF=$1;;
-    -W|--wait)       shift; export SETZER_LOOP_SECONDS=$1;;
 
-       --auto)              export SETZER_AUTO=yes;;
+    -S|--spread)     shift; export SETZER_SPREAD=$1;;
+
+    -I|--interval)   shift; export SETZER_INTERVAL_SECONDS=$1;;
+    -R|--resend)     shift; export SETZER_WAIT_FOR_RESEND=$1;;
 
        --gas-start)  shift; export SETZER_INITIAL_GAS_PRICE=$1;;
        --gas-inc)    shift; export SETZER_GAS_PRICE_INCREMENT=$1;;
