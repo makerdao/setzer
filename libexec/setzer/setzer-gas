@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+### setzer-gas -- get gas price estimate to start tx
+### Usage: setzer gas
+set -e
+json=$(curl -sS "https://ethgasstation.info/json/ethgasAPI.json")
+gas=$(jshon <<<"$json" -e average -u)
+gas=$(bc <<< "${gas} / 10")
+echo $(seth --to-wei "$gas" gwei)
