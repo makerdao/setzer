@@ -18,8 +18,28 @@ function log {
   echo "[$(date "+%D %T")] $*"
 }
 
+function getnode {
+  # Check if connected to node
+  export RPC_TIMEOUT=${RPC_TIMEOUT:-15s}
+  for PORT in ${RPC_PORTS:-8545}; do
+    export ETH_RPC_PORT=$PORT
+    log "Trying on rpc port $ETH_RPC_PORT."
+    syncing=$(timeout $RPC_TIMEOUT seth rpc eth_syncing 2> /dev/null) \
+  	  && peers=$(timeout $RPC_TIMEOUT seth rpc net_peerCount 2> /dev/null) \
+  	  && blockNumber=$(timeout $RPC_TIMEOUT seth block latest number 2> /dev/null || true) \
+  	  && sanity=($(timeout $RPC_TIMEOUT setzer peek "$SETZER_FEED" 2> /dev/null || true))
+    [[ $syncing == "false" ]] && [[ $peers -gt 0 ]] && [[ $blockNumber -gt 0 ]] && [[ $sanity ]] \
+  	  && running_client=1  && break 
+  done
+  
+  if [ "${running_client:-0}" -ne 1 ]; then
+   log "Not connected to Ethereum, retry in 5 seconds..."
+   sleep 5
+   exec "$0" "$@"
+  fi
+  log "Node running on RPC port $ETH_RPC_PORT."
+}
 # Initialization
-
 if ! [[ $SETZER_BOT_INIT ]]; then
   export SETZER_BOT_INIT=1
   export SETH_ASYNC=yes
@@ -27,6 +47,9 @@ if ! [[ $SETZER_BOT_INIT ]]; then
   # Global configuration
   [[ -e /etc/setzer.conf ]] && . /etc/setzer.conf
   
+  #get valid node
+  getnode
+
   # Local configuration (via -C or --config)
   # Useful for running multiple bots on one box
   [[ -e $SETZER_CONF ]] && . $SETZER_CONF
@@ -45,21 +68,20 @@ if ! [[ $SETZER_BOT_INIT ]]; then
   [[ $SETZER_SPREAD ]] || export SETZER_SPREAD=1
 
   [[ $SETZER_INTERVAL_SECONDS ]] || export SETZER_INTERVAL_SECONDS=60
-  [[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=90
+  [[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=120
 
   [[ $SETZER_AUTO ]] && echo AUTO mode ON
 
   # Gas stuff
-
-  [[ $SETZER_INITIAL_GAS_PRICE ]] || export SETZER_INITIAL_GAS_PRICE=`seth --to-wei 1 gwei`
+  [[ $SETZER_INITIAL_GAS_PRICE ]] || export SETZER_INITIAL_GAS_PRICE=`seth gas-price`
   [[ $SETZER_GAS_PRICE_INCREMENT ]] || export SETZER_GAS_PRICE_INCREMENT=`seth --to-wei 5 gwei`
-  [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=`seth --to-wei 26 gwei`
+  [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=`seth --to-wei 350 gwei`
   
   # TODO: these should be automatic
   export ETH_GAS_PRICE=$SETZER_INITIAL_GAS_PRICE
 
   # NOTE: Nice way to see if bots are updated. Increase this by 1 on new versions :)
-  export ETH_GAS=200002
+  export ETH_GAS=200006
 
 
   echo "Default account:     $ETH_FROM"
@@ -77,25 +99,7 @@ if ! [[ $SETZER_BOT_INIT ]]; then
   echo "------- INITIALIZATION COMPLETE -------"
 fi
 
-# Check if connected to node
-export RPC_TIMEOUT=${RPC_TIMEOUT:-15s}
-for PORT in ${RPC_PORTS:-8545}; do
-  export ETH_RPC_PORT=$PORT
-  log "Trying on rpc port $ETH_RPC_PORT."
-  syncing=$(timeout $RPC_TIMEOUT seth rpc eth_syncing 2> /dev/null) \
-	  && peers=$(timeout $RPC_TIMEOUT seth rpc net_peerCount 2> /dev/null) \
-	  && blockNumber=$(timeout $RPC_TIMEOUT seth block latest number 2> /dev/null || true) \
-	  && sanity=($(timeout $RPC_TIMEOUT setzer peek "$SETZER_FEED" 2> /dev/null || true))
-  [[ $syncing == "false" ]] && [[ $peers -gt 0 ]] && [[ $blockNumber -gt 0 ]] && [[ $sanity ]] \
-	  && running_client=1  && break 
-done
-
-if [ "${running_client:-0}" -ne 1 ]; then
- log "Not connected to Ethereum, retry in 5 seconds..."
- sleep 5
- exec "$0" "$@"
-fi
-log "Node running on RPC port $ETH_RPC_PORT."
+getnode
 expires=$(setzer expires "$SETZER_FEED")
 log "Expires in `setzer --format "$expires"`"
 if [ "$expires" -lt 3600 ]; then
@@ -144,14 +148,14 @@ else
 fi
 
 if [[ $needsupdate ]]; then
-  [[ ! $SETZER_AUTO ]] && read -r -p "Are you sure? [y/N] " response
+  [[ ! $SETZER_AUTO ]] && read -r -p "Send transaction? [y/N] " response
   if [[ $SETZER_AUTO || "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
     CURRENT_LOOP=1
     # TODO: check if $PENDING_TRANSACTION_NONCE
     nonce=$(seth nonce "$ETH_FROM")
     export ETH_NONCE=$nonce
     until=$(date +%s -d'+6 hour')
-    log "Sending with nonce $ETH_NONCE"
+    log "Sending with nonce $ETH_NONCE and gas price $ETH_GAS_PRICE wei"
     tx=$(setzer post "$SETZER_FEED" "$new" "$until" "$SETZER_MEDIANIZER")
     if [[ $tx ]]; then
       log $tx
