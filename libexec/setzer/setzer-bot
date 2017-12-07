@@ -32,21 +32,21 @@ function getnode {
   export RPC_TIMEOUT=${RPC_TIMEOUT:-15s}
   for PORT in ${RPC_PORTS:-8545}; do
     export ETH_RPC_PORT=$PORT
-    log "Trying on rpc port $ETH_RPC_PORT."
+    verbose "Trying on rpc port $ETH_RPC_PORT."
     syncing=$(timeout $RPC_TIMEOUT seth rpc eth_syncing 2> /dev/null) \
   	  && peers=$(timeout $RPC_TIMEOUT seth rpc net_peerCount 2> /dev/null) \
-      && timestamp=$(($(date +%s) - $(seth block latest timestamp 2>/dev/null || echo 0) > 60)) \
+      && timestamp=$(( $(date +%s) - $(seth block latest timestamp 2>/dev/null || echo 0) )) \
   	  && sanity=($(timeout $RPC_TIMEOUT setzer peek "$SETZER_FEED" 2> /dev/null || true))
-    [[ $syncing == "false" ]] && [[ $peers -gt 0 ]] && [[ $timestamp = 0 ]] && [[ $sanity ]] \
+    [[ $syncing == "false" ]] && [[ $peers -gt 0 ]] && [[ $timestamp -lt 60 ]] && [[ $sanity ]] \
   	  && running_client=1  && break 
   done
   
   if [ "${running_client:-0}" -ne 1 ]; then
    log "Not connected to Ethereum, retry in 5 seconds..."
-   verbose "Syncing:   $syncing (should be false)"
-   verbose "Peers:     $peers (should be > 0)"
-   verbose "Timestamp: $timestamp (should be 0)"
-   verbose "Sanity:    $sanity (should be not empty)"
+   verbose "Syncing:    $syncing (should be false)"
+   verbose "Peers:      $peers (should be > 0)"
+   verbose "Last block: $timestamp (should be < 60)"
+   verbose "Sanity:     $sanity (should be not empty)"
    sleep 5
    exec "$0" "$@"
   fi
@@ -54,11 +54,17 @@ function getnode {
 }
 
 # Global configuration
-[[ -e /etc/setzer.conf ]] && . /etc/setzer.conf
+if [[ -e /etc/setzer.conf ]]; then
+  . /etc/setzer.conf
+  #verbose "Imported configuration from /etc/setzer.conf"
+fi
 
 # Local configuration (via -C or --config)
 # Useful for running multiple bots on one box
-[[ -e $SETZER_CONF ]] && . $SETZER_CONF
+if [[ -e $SETZER_CONF ]]; then
+  . $SETZER_CONF
+  #verbose "Imported configuration from $SETZER_CONF"
+fi
 
 #get valid node
 getnode
@@ -78,12 +84,12 @@ getnode
 [[ $SETZER_AUTO ]] && echo AUTO mode ON
 
 # Gas stuff
-[[ $SETZER_INITIAL_GAS_PRICE ]] || export SETZER_INITIAL_GAS_PRICE=`setzer gas`
+[[ $SETZER_INITIAL_GAS_PRICE ]] || export SETZER_INITIAL_GAS_PRICE=`seth gas-price`
 [[ $SETZER_GAS_PRICE_INCREMENT ]] || export SETZER_GAS_PRICE_INCREMENT=`seth --to-wei 5 gwei`
 [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=`seth --to-wei 350 gwei`
 
 # NOTE: Nice way to see if bots are updated. Increase this by 1 on new versions :)
-export ETH_GAS=200007
+export ETH_GAS=200020
 
 # Initialization
 if ! [[ $SETZER_BOT_INIT ]]; then
@@ -126,26 +132,34 @@ test=$(bc <<< "${spread#-} >= ${SETZER_SPREAD}")
 if [[ ${test} -ne 0 ]]; then
   needsupdate="yes"
   log "Spread larger than $SETZER_SPREAD, will update."
+else
+  verbose "($spread) less than $SETZER_SPREAD"
 fi
 
 # Check if we have transactions pending
 ptn=$PENDING_TRANSACTION_NONCE
 if [[ $ptn ]]; then
   nonce=$(seth nonce $ETH_FROM)
-  [[ "$nonce" -gt "$ptn"  ]] && mined="yes"
+  verbose "Transaction pending. Checking if nonce $nonce has increased."
+  if [[ "$nonce" -gt "$ptn"  ]]; then
+    mined="yes"
+    log "SUCCESS! Feed updated. Gas price was $ETH_GAS_PRICE wei"
+  else
+    verbose "Transaction still pending..."
+  fi
 fi
 
 if [[ $mined ]]; then
   #reset gas
-  log "SUCCESS! Feed updated. Gas price was $ETH_GAS_PRICE wei"
   export PENDING_TRANSACTION_NONCE=
-  reset_gas=`setzer gas`
+  reset_gas=`seth gas-price`
   [[ $reset_gas ]] || reset_gas=`seth gas-price`
   export ETH_GAS_PRICE=$reset_gas
 else
   if [[ $ptn ]]; then
     export CURRENT_LOOP=$(($CURRENT_LOOP + 1))
     # increase gas price
+    verbose "Increasing gas price by $SETZER_GAS_PRICE_INCREMENT"
     newgasprice=$(($ETH_GAS_PRICE + $SETZER_GAS_PRICE_INCREMENT))
     if [[ $newgasprice -le $SETZER_MAX_GAS_PRICE ]]; then
       export ETH_GAS_PRICE=$newgasprice
@@ -165,11 +179,12 @@ if [[ $needsupdate ]]; then
     # If there is no pending tx, reset initial gas price and nonce
     # TODO: let user choose if setzer will handle starting gas
     if ! [[ $ptn ]]; then
-      reset_gas=`setzer gas`
+      reset_gas=`seth gas-price`
       [[ $reset_gas ]] || reset_gas=`seth gas-price`
       export ETH_GAS_PRICE=$reset_gas
       nonce=$(seth nonce "$ETH_FROM")
       export ETH_NONCE=$nonce
+      verbose "Creating new transaction with gas $ETH_GAS_PRICE and nonce $ETH_NONCE"
     fi
     until=$(date +%s -d'+6 hour')
     log "Sending with nonce $ETH_NONCE and gas price $ETH_GAS_PRICE wei"
