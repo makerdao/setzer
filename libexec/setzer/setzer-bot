@@ -89,7 +89,7 @@ getnode
 [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=`seth --to-wei 350 gwei`
 
 # NOTE: Nice way to see if bots are updated. Increase this by 1 on new versions :)
-export ETH_GAS=200020
+export ETH_GAS=200008
 
 # Initialization
 if ! [[ $SETZER_BOT_INIT ]]; then
