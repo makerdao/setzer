@@ -73,7 +73,7 @@ if ! [[ $SETZER_BOT_INIT ]]; then
   [[ $SETZER_AUTO ]] && echo AUTO mode ON
 
   # Gas stuff
-  [[ $SETZER_INITIAL_GAS_PRICE ]] || export SETZER_INITIAL_GAS_PRICE=`seth gas-price`
+  [[ $SETZER_INITIAL_GAS_PRICE ]] || export SETZER_INITIAL_GAS_PRICE=`setzer gas`
   [[ $SETZER_GAS_PRICE_INCREMENT ]] || export SETZER_GAS_PRICE_INCREMENT=`seth --to-wei 5 gwei`
   [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=`seth --to-wei 350 gwei`
   
@@ -130,7 +130,9 @@ if [[ $mined ]]; then
   #reset gas
   log "SUCCESS! Feed updated. Gas price was $ETH_GAS_PRICE wei"
   export PENDING_TRANSACTION_NONCE=
-  export ETH_GAS_PRICE=$SETZER_INITIAL_GAS_PRICE
+  reset_gas=`setzer gas`
+  [[ $reset_gas ]] || reset_gas=`seth gas-price`
+  export ETH_GAS_PRICE=$reset_gas
 else
   if [[ $ptn ]]; then
     export CURRENT_LOOP=$(($CURRENT_LOOP + 1))
