@@ -1,8 +1,20 @@
 #!/usr/bin/env bash
-### setzer-gas -- get gas price estimate to start tx
-### Usage: setzer gas
+### setzer-gas -- get gas price estimate for transaction
+### Usage: setzer gas [<safe|average|fast>] (default: `average')
+###
+### Gets recommended gas price from https://ethgasstation.info
+### Defaults to "average" if no argument given
 set -e
-json=$(curl -sS "https://ethgasstation.info/json/ethgasAPI.json")
-gas=$(jshon <<<"$json" -e average -u)
+type=${1:-average}
+if [[ $type = "safe" ]]; then
+    type="safeLow"
+elif [[ $type = "fast" ]]; then
+    type="fastest"
+elif ! [[ $type = "average" ]]; then
+    setzer --bad-usage "$0"
+fi
+json=$(curl -sS "https://ethgasstation.info/json/ethgasAPI.json" 2> /dev/null || true)
+gas=$(jshon <<<"$json" -e $type -u 2> /dev/null || true)
+[[ $gas ]] || { seth gas-price; exit; }
 gas=$(bc <<< "${gas} / 10")
 echo $(seth --to-wei "$gas" gwei)
