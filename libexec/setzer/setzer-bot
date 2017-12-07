@@ -18,8 +18,28 @@ function log {
   echo "[$(date "+%D %T")] $*"
 }
 
+function getnode {
+  # Check if connected to node
+  export RPC_TIMEOUT=${RPC_TIMEOUT:-15s}
+  for PORT in ${RPC_PORTS:-8545}; do
+    export ETH_RPC_PORT=$PORT
+    log "Trying on rpc port $ETH_RPC_PORT."
+    syncing=$(timeout $RPC_TIMEOUT seth rpc eth_syncing 2> /dev/null) \
+  	  && peers=$(timeout $RPC_TIMEOUT seth rpc net_peerCount 2> /dev/null) \
+  	  && blockNumber=$(timeout $RPC_TIMEOUT seth block latest number 2> /dev/null || true) \
+  	  && sanity=($(timeout $RPC_TIMEOUT setzer peek "$SETZER_FEED" 2> /dev/null || true))
+    [[ $syncing == "false" ]] && [[ $peers -gt 0 ]] && [[ $blockNumber -gt 0 ]] && [[ $sanity ]] \
+  	  && running_client=1  && break 
+  done
+  
+  if [ "${running_client:-0}" -ne 1 ]; then
+   log "Not connected to Ethereum, retry in 5 seconds..."
+   sleep 5
+   exec "$0" "$@"
+  fi
+  log "Node running on RPC port $ETH_RPC_PORT."
+}
 # Initialization
-
 if ! [[ $SETZER_BOT_INIT ]]; then
   export SETZER_BOT_INIT=1
   export SETH_ASYNC=yes
@@ -27,6 +47,9 @@ if ! [[ $SETZER_BOT_INIT ]]; then
   # Global configuration
   [[ -e /etc/setzer.conf ]] && . /etc/setzer.conf
   
+  #get valid node
+  getnode
+
   # Local configuration (via -C or --config)
   # Useful for running multiple bots on one box
   [[ -e $SETZER_CONF ]] && . $SETZER_CONF
@@ -51,8 +74,8 @@ if ! [[ $SETZER_BOT_INIT ]]; then
 
   # Gas stuff
   [[ $SETZER_INITIAL_GAS_PRICE ]] || export SETZER_INITIAL_GAS_PRICE=`setzer gas`
-  [[ $SETZER_GAS_PRICE_INCREMENT ]] || export SETZER_GAS_PRICE_INCREMENT=`seth --to-wei 1 gwei`
-  [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=`seth --to-wei 35 gwei`
+  [[ $SETZER_GAS_PRICE_INCREMENT ]] || export SETZER_GAS_PRICE_INCREMENT=`seth --to-wei 5 gwei`
+  [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=`seth --to-wei 350 gwei`
   
   # TODO: these should be automatic
   export ETH_GAS_PRICE=$SETZER_INITIAL_GAS_PRICE
@@ -76,16 +99,7 @@ if ! [[ $SETZER_BOT_INIT ]]; then
   echo "------- INITIALIZATION COMPLETE -------"
 fi
 
-# Check if connected to node
-syncing=$(seth rpc eth_syncing 2> /dev/null)
-peers=$(seth rpc net_peerCount 2> /dev/null)
-blockNumber=$(seth block latest number 2> /dev/null || true)
-sanity=($(setzer peek "$SETZER_FEED" 2> /dev/null || true))
-[[ $syncing == "false" ]] && [[ $peers -gt 0 ]] && [[ $blockNumber -gt 0 ]] && [[ $sanity ]] || { log "Not connected to Ethereum, retry in 5 seconds..."; sleep 5; exec "$0" "$@"; }
-
-[[ $SETZER_INITIAL_GAS_PRICE ]] || export SETZER_INITIAL_GAS_PRICE=`seth gas-price`
-[[ $ETH_GAS_PRICE ]] || export ETH_GAS_PRICE=$SETZER_INITIAL_GAS_PRICE
-
+getnode
 expires=$(setzer expires "$SETZER_FEED")
 log "Expires in `setzer --format "$expires"`"
 if [ "$expires" -lt 3600 ]; then
