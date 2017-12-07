@@ -19,6 +19,9 @@ auto                 run automatically without user intervention
 gas-start=gas        starting gas price per tx in wei
 gas-inc=gas          amount to increment gas price per tx in wei
 gas-max=gas          maximum gas price to pay per tx in wei
+
+  Miscellaneous:
+verbose              output extra information (useful for debugging)
 "
 
 set -e
@@ -42,6 +45,7 @@ while [[ $1 ]]; do
     --)              shift; break;;
     
        --auto)              export SETZER_AUTO=yes;;
+       --verbose)           export SETZER_VERBOSE=yes;;
 
     -C|--config)     shift; export SETZER_CONF=$1;;
 
