@@ -3,15 +3,20 @@
 ### Usage: setzer bot [options]
 ### --
 ###   Options:
+### auto                 run setzer bot in auto mode (no user interaction)
 ### C,config=file        configuration file
-### I,interval=seconds   seconds to wait between price checks (default: 60)
+### S,spread=percent     minimum percent deviation to update (default: 1)
+### I,interval=seconds   seconds to wait between checks (default: 60)
 ### R,resend=seconds     seconds to wait before resending tx (default: 90)
-### auto                 run automatically without user intervention
-### 
+###
 ###   Gas options:
-### gas-start=gas        starting gas price per tx in Gwei
-### gas-inc=gas          amount to increment gas price per tx in Gwei
-### gas-max=gas          maximum gas price to pay per tx in Gwei
+### gas-start=gas        starting gas price per tx in wei
+### gas-inc=gas          amount to increment gas price per tx in wei
+### gas-max=gas          maximum gas price to pay per tx in wei
+###
+###   Miscellaneous:
+### verbose              output extra information (useful for debugging)
+
 #set -ex
 
 function log {
@@ -103,8 +108,6 @@ if ! [[ $SETZER_BOT_INIT ]]; then
   echo ""
   echo "------- INITIALIZATION COMPLETE -------"
 fi
-
-getnode
 
 expires=$(setzer expires "$SETZER_FEED")
 log "Expires in `setzer --format "$expires"`"

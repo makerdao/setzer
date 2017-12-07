@@ -9,11 +9,11 @@ OPTS="setzer [<options>] <command> [<args>]
 setzer <command> --help
 --
   Options:
+auto                 run setzer bot in auto mode (no user interaction)
 C,config=file        configuration file
+S,spread=percent     minimum percent deviation to update (default: 1)
 I,interval=seconds   seconds to wait between checks (default: 60)
 R,resend=seconds     seconds to wait before resending tx (default: 90)
-S,spread=percent     minimum percent deviation to update (default: 1)
-auto                 run automatically without user intervention
 
   Gas options:
 gas-start=gas        starting gas price per tx in wei
