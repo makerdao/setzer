@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### setzer-gas -- get gas price estimate for transaction
+### setzer-gas -- get gas price estimate for transaction in wei
 ### Usage: setzer gas [<safe|average|fast>] (default: `average')
 ###
 ### Gets recommended gas price from https://ethgasstation.info

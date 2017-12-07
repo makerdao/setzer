@@ -58,7 +58,7 @@ if ! [[ $SETZER_BOT_INIT ]]; then
   export ETH_GAS_PRICE=$SETZER_INITIAL_GAS_PRICE
 
   # NOTE: Nice way to see if bots are updated. Increase this by 1 on new versions :)
-  export ETH_GAS=200006
+  export ETH_GAS=200007
 
 
   echo "Default account:     $ETH_FROM"

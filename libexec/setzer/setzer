@@ -16,9 +16,9 @@ S,spread=percent     minimum percent deviation to update (default: 1)
 auto                 run automatically without user intervention
 
   Gas options:
-gas-start=gas        starting gas price per tx in Gwei
-gas-inc=gas          amount to increment gas price per tx in Gwei
-gas-max=gas          maximum gas price to pay per tx in Gwei
+gas-start=gas        starting gas price per tx in wei
+gas-inc=gas          amount to increment gas price per tx in wei
+gas-max=gas          maximum gas price to pay per tx in wei
 "
 
 set -e
