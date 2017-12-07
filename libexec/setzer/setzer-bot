@@ -46,13 +46,13 @@ if ! [[ $SETZER_BOT_INIT ]]; then
 
   # Global configuration
   [[ -e /etc/setzer.conf ]] && . /etc/setzer.conf
-  
-  #get valid node
-  getnode
 
   # Local configuration (via -C or --config)
   # Useful for running multiple bots on one box
   [[ -e $SETZER_CONF ]] && . $SETZER_CONF
+
+  #get valid node
+  getnode
 
   echo "--------- STARTING SETZER BOT ---------"
   echo "Bot started `date`"
