@@ -28,6 +28,14 @@ function verbose {
 }
 
 function getnode {
+  #get the minimal config
+  eval "$( [[ -e /etc/setzer.conf ]] && cat /etc/setzer.conf \
+	  | grep 'export[[:space:]]\+\(RPC_TIMEOUT\|RPC_PORTS\| SETZER_FEED\|SETZER_VERBOSE\|SETZER_CONF\)' \
+	  | sed -e "s/\n/;/g") "
+  eval "$( [[ -e $SETZER_CONF ]] && cat $SETZER_CONF \
+	  | grep 'export[[:space:]]\+\(RPC_TIMEOUT\|RPC_PORTS\| SETZER_FEED\|SETZER_VERBOSE\|SETZER_CONF\)' \
+	  | sed -e "s/\n/;/g") "
+
   # Check if connected to node
   export RPC_TIMEOUT=${RPC_TIMEOUT:-15s}
   for PORT in ${RPC_PORTS:-8545}; do
@@ -35,7 +43,7 @@ function getnode {
     verbose "Trying on rpc port $ETH_RPC_PORT."
     syncing=$(timeout $RPC_TIMEOUT seth rpc eth_syncing 2> /dev/null) \
   	  && peers=$(timeout $RPC_TIMEOUT seth rpc net_peerCount 2> /dev/null) \
-      && timestamp=$(( $(date +%s) - $(seth block latest timestamp 2>/dev/null || echo 0) )) \
+      && timestamp=$(( $(date +%s) - $(timeout $RPC_TIMEOUT seth block latest timestamp 2>/dev/null || echo 0) )) \
   	  && sanity=($(timeout $RPC_TIMEOUT setzer peek "$SETZER_FEED" 2> /dev/null || true))
     [[ $syncing == "false" ]] && [[ $peers -gt 0 ]] && [[ $timestamp -lt 60 ]] && [[ $sanity ]] \
   	  && running_client=1  && break 
@@ -53,6 +61,9 @@ function getnode {
   log "Node running on RPC port $ETH_RPC_PORT."
 }
 
+#get valid node
+getnode
+
 # Global configuration
 if [[ -e /etc/setzer.conf ]]; then
   . /etc/setzer.conf
@@ -65,9 +76,6 @@ if [[ -e $SETZER_CONF ]]; then
   . $SETZER_CONF
   #verbose "Imported configuration from $SETZER_CONF"
 fi
-
-#get valid node
-getnode
 
 [[ $ETH_FROM ]] || errors+=("No default account set. Please set it via ETH_FROM ")
 [[ $SETZER_FEED ]] || errors+=("No price feed set. Please set it via SETZER_FEED ")
