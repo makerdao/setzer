@@ -163,7 +163,7 @@ fi
 if [[ $mined ]]; then
   #reset gas
   export PENDING_TRANSACTION_NONCE=
-  reset_gas=`seth gas-price`
+  reset_gas=$SETZER_INITIAL_GAS_PRICE
   [[ $reset_gas ]] || reset_gas=`seth gas-price`
   export ETH_GAS_PRICE=$reset_gas
 else
@@ -190,7 +190,7 @@ if [[ $needsupdate ]]; then
     # If there is no pending tx, reset initial gas price and nonce
     # TODO: let user choose if setzer will handle starting gas
     if ! [[ $ptn ]]; then
-      reset_gas=`seth gas-price`
+      reset_gas=$SETZER_INITIAL_GAS_PRICE
       [[ $reset_gas ]] || reset_gas=`seth gas-price`
       export ETH_GAS_PRICE=$reset_gas
       nonce=$(seth nonce "$ETH_FROM")
