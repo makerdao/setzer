@@ -30,10 +30,10 @@ function verbose {
 function getnode {
   #get the minimal config
   eval "$( [[ -e /etc/setzer.conf ]] && cat /etc/setzer.conf \
-	  | grep 'export[[:space:]]\+\(RPC_TIMEOUT\|RPC_PORTS\| SETZER_FEED\|SETZER_VERBOSE\|SETZER_CONF\)' \
+	  | grep 'export[[:space:]]\+\(RPC_TIMEOUT\|RPC_PORTS\|SETZER_FEED\|SETZER_VERBOSE\|SETZER_CONF\)' \
 	  | sed -e "s/\n/;/g") "
   eval "$( [[ -e $SETZER_CONF ]] && cat $SETZER_CONF \
-	  | grep 'export[[:space:]]\+\(RPC_TIMEOUT\|RPC_PORTS\| SETZER_FEED\|SETZER_VERBOSE\|SETZER_CONF\)' \
+	  | grep 'export[[:space:]]\+\(RPC_TIMEOUT\|RPC_PORTS\|SETZER_FEED\|SETZER_VERBOSE\|SETZER_CONF\)' \
 	  | sed -e "s/\n/;/g") "
 
   # Check if connected to node
@@ -60,6 +60,8 @@ function getnode {
   fi
   log "Node running on RPC port $ETH_RPC_PORT."
 }
+
+export PATH="$PATH:/usr/local/bin/:/usr/bin/"
 
 #get valid node
 getnode
@@ -92,7 +94,8 @@ fi
 [[ $SETZER_AUTO ]] && echo AUTO mode ON
 
 # Gas stuff
-[[ $SETZER_INITIAL_GAS_PRICE ]] || export SETZER_INITIAL_GAS_PRICE=`seth gas-price`
+[[ $SETZER_INITIAL_GAS_PRICE ]] || export SETZER_INITIAL_GAS_PRICE=$(bc <<< "`seth gas-p|[[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_
+rice` / 3 ")
 [[ $SETZER_GAS_PRICE_INCREMENT ]] || export SETZER_GAS_PRICE_INCREMENT=`seth --to-wei 5 gwei`
 [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=`seth --to-wei 350 gwei`
 
