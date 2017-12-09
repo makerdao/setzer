@@ -50,7 +50,7 @@ function getnode {
    sleep 5
    exec "$0" "$@"
   fi
-  log "Node running on RPC port $ETH_RPC_PORT."
+  verbose "Node running on RPC port $ETH_RPC_PORT."
 }
 
 # Global configuration
@@ -79,12 +79,12 @@ getnode
 [[ $SETZER_SPREAD ]] || export SETZER_SPREAD=1
 
 [[ $SETZER_INTERVAL_SECONDS ]] || export SETZER_INTERVAL_SECONDS=60
-[[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=120
+[[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=180
 
 [[ $SETZER_AUTO ]] && echo AUTO mode ON
 
 # Gas stuff
-[[ $SETZER_INITIAL_GAS_PRICE ]] || export SETZER_INITIAL_GAS_PRICE=`seth gas-price`
+[[ $SETZER_INITIAL_GAS_PRICE ]] || export SETZER_INITIAL_GAS_PRICE=`setzer gas safe`
 [[ $SETZER_GAS_PRICE_INCREMENT ]] || export SETZER_GAS_PRICE_INCREMENT=`seth --to-wei 5 gwei`
 [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=`seth --to-wei 350 gwei`
 
@@ -152,15 +152,16 @@ fi
 if [[ $mined ]]; then
   #reset gas
   export PENDING_TRANSACTION_NONCE=
-  reset_gas=`seth gas-price`
+  reset_gas=`setzer gas safe`
+  reset_gas=$(bc <<< "$reset_gas * 0.7 / 1")
   [[ $reset_gas ]] || reset_gas=`seth gas-price`
   export ETH_GAS_PRICE=$reset_gas
 else
   if [[ $ptn ]]; then
     export CURRENT_LOOP=$(($CURRENT_LOOP + 1))
     # increase gas price
-    verbose "Increasing gas price by $SETZER_GAS_PRICE_INCREMENT"
-    newgasprice=$(($ETH_GAS_PRICE + $SETZER_GAS_PRICE_INCREMENT))
+    verbose "Increasing gas price by 10%"
+    newgasprice=$(bc <<< "$ETH_GAS_PRICE * 1.1 / 1")
     if [[ $newgasprice -le $SETZER_MAX_GAS_PRICE ]]; then
       export ETH_GAS_PRICE=$newgasprice
       log "New gas price: $ETH_GAS_PRICE"
@@ -179,7 +180,8 @@ if [[ $needsupdate ]]; then
     # If there is no pending tx, reset initial gas price and nonce
     # TODO: let user choose if setzer will handle starting gas
     if ! [[ $ptn ]]; then
-      reset_gas=`seth gas-price`
+      reset_gas=`setzer gas safe`
+      reset_gas=$(bc <<< "$reset_gas * 0.7 / 1")
       [[ $reset_gas ]] || reset_gas=`seth gas-price`
       export ETH_GAS_PRICE=$reset_gas
       nonce=$(seth nonce "$ETH_FROM")
