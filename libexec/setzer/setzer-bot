@@ -161,7 +161,7 @@ else
     export CURRENT_LOOP=$(($CURRENT_LOOP + 1))
     # increase gas price
     verbose "Increasing gas price by 10%"
-    newgasprice=$(bc <<< "$ETH_GAS_PRICE * 1.1 / 1")
+    newgasprice=$(bc <<< "$ETH_GAS_PRICE * 1.11 / 1")
     if [[ $newgasprice -le $SETZER_MAX_GAS_PRICE ]]; then
       export ETH_GAS_PRICE=$newgasprice
       log "New gas price: $ETH_GAS_PRICE"
