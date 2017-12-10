@@ -197,11 +197,14 @@ if [[ $needsupdate ]]; then
     else
       # No transaction created. Either nonce issues or needs higher gas price
       log "Error creating transaction..."
+      error_wait_seconds=30
     fi
   fi
 fi
 
-if [ $PENDING_TRANSACTION_NONCE ]; then
+if [ $error_wait_seconds ]; then
+  wait=$error_wait_seconds
+elif [ $PENDING_TRANSACTION_NONCE ]; then
   wait=$SETZER_WAIT_FOR_RESEND
 else
   wait=$SETZER_INTERVAL_SECONDS
