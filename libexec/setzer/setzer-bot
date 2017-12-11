@@ -58,7 +58,7 @@ function getnode {
    sleep 5
    exec "$0" "$@"
   fi
-  log "Node running on RPC port $ETH_RPC_PORT."
+  verbose "Node running on RPC port $ETH_RPC_PORT."
 }
 
 export PATH="$PATH:/usr/local/bin/:/usr/bin/"
@@ -89,7 +89,7 @@ fi
 [[ $SETZER_SPREAD ]] || export SETZER_SPREAD=1
 
 [[ $SETZER_INTERVAL_SECONDS ]] || export SETZER_INTERVAL_SECONDS=60
-[[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=120
+[[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=180
 
 [[ $SETZER_AUTO ]] && echo AUTO mode ON
 
@@ -100,7 +100,7 @@ rice` / 3 ")
 [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=`seth --to-wei 350 gwei`
 
 # NOTE: Nice way to see if bots are updated. Increase this by 1 on new versions :)
-export ETH_GAS=200020
+export ETH_GAS=200009
 
 # Initialization
 if ! [[ $SETZER_BOT_INIT ]]; then
@@ -170,8 +170,8 @@ else
   if [[ $ptn ]]; then
     export CURRENT_LOOP=$(($CURRENT_LOOP + 1))
     # increase gas price
-    verbose "Increasing gas price by $SETZER_GAS_PRICE_INCREMENT"
-    newgasprice=$(($ETH_GAS_PRICE + $SETZER_GAS_PRICE_INCREMENT))
+    verbose "Increasing gas price by 10%"
+    newgasprice=$(bc <<< "$ETH_GAS_PRICE * 1.11 / 1")
     if [[ $newgasprice -le $SETZER_MAX_GAS_PRICE ]]; then
       export ETH_GAS_PRICE=$newgasprice
       log "New gas price: $ETH_GAS_PRICE"
@@ -206,11 +206,14 @@ if [[ $needsupdate ]]; then
     else
       # No transaction created. Either nonce issues or needs higher gas price
       log "Error creating transaction..."
+      error_wait_seconds=30
     fi
   fi
 fi
 
-if [ $PENDING_TRANSACTION_NONCE ]; then
+if [ $error_wait_seconds ]; then
+  wait=$error_wait_seconds
+elif [ $PENDING_TRANSACTION_NONCE ]; then
   wait=$SETZER_WAIT_FOR_RESEND
 else
   wait=$SETZER_INTERVAL_SECONDS
