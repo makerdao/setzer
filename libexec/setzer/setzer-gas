@@ -1,18 +1,16 @@
 #!/usr/bin/env bash
 ### setzer-gas -- get gas price estimate for transaction in wei
-### Usage: setzer gas [<safe|average|fast>] (default: `average')
+### Usage: setzer gas [<safe|average|fast|fastest>] (default: `average')
 ###
 ### Gets recommended gas price from https://ethgasstation.info
 ### Defaults to "average" if no argument given
 set -e
 type=${1:-average}
-if [[ $type = "safe" ]]; then
-    type="safeLow"
-elif [[ $type = "fast" ]]; then
-    type="fastest"
-elif ! [[ $type = "average" ]]; then
-    setzer --bad-usage "$0"
-fi
+case $type in
+    safe)                 type="safeLow";;
+    average|fast|fastest) type=$type;;
+    *) setzer --bad-usage "$0"
+esac;
 json=$(curl -sS "https://ethgasstation.info/json/ethgasAPI.json" 2> /dev/null || true)
 gas=$(jshon <<<"$json" -e $type -u 2> /dev/null || true)
 [[ $gas ]] || { seth gas-price; exit; }
