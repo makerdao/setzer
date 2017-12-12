@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -e
-json=$(curl -sS "https://mkr.tools/api/mkr/latest")
-price=$(jshon <<<"$json" -e priceUSD -u)
-echo $price
+json=$(curl -sS "http://api.oasisdex.com/v1/markets/mkr/eth")
+price=$(jshon <<<"$json" -e price -u)
+eth=$(setzer price cryptocompare)
+echo $(bc <<<"$price * $eth")
