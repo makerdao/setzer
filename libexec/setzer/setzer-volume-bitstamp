@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+json=$(curl -sS "https://www.bitstamp.net/api/v2/ticker/ethusd/")
+volume=$(jshon <<<"$json" -e volume -u)
+echo $volume
