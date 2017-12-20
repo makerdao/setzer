@@ -28,32 +28,22 @@ function verbose {
 }
 
 function getnode {
-  #get the minimal config
-  eval "$( [[ -e /etc/setzer.conf ]] && cat /etc/setzer.conf \
-	  | grep 'export[[:space:]]\+\(RPC_TIMEOUT\|RPC_PORTS\|SETZER_FEED\|SETZER_VERBOSE\|SETZER_CONF\)' \
-	  | sed -e "s/\n/;/g") "
-  eval "$( [[ -e $SETZER_CONF ]] && cat $SETZER_CONF \
-	  | grep 'export[[:space:]]\+\(RPC_TIMEOUT\|RPC_PORTS\|SETZER_FEED\|SETZER_VERBOSE\|SETZER_CONF\)' \
-	  | sed -e "s/\n/;/g") "
-
   # Check if connected to node
   export RPC_TIMEOUT=${RPC_TIMEOUT:-15s}
   for PORT in ${RPC_PORTS:-8545}; do
     export ETH_RPC_PORT=$PORT
     verbose "Trying on rpc port $ETH_RPC_PORT."
-    syncing=$(timeout $RPC_TIMEOUT seth rpc eth_syncing 2> /dev/null) \
-  	  && peers=$(timeout $RPC_TIMEOUT seth rpc net_peerCount 2> /dev/null) \
+  	  peers=$(timeout $RPC_TIMEOUT seth rpc net_peerCount 2> /dev/null) \
       && timestamp=$(( $(date +%s) - $(timeout $RPC_TIMEOUT seth block latest timestamp 2>/dev/null || echo 0) )) \
   	  && sanity=($(timeout $RPC_TIMEOUT setzer peek "$SETZER_FEED" 2> /dev/null || true))
-    [[ $syncing == "false" ]] && [[ $peers -gt 0 ]] && [[ $timestamp -lt 60 ]] && [[ $sanity ]] \
+    [[ $peers -gt 0 ]] && [[ $timestamp -lt 90 ]] && [[ $sanity ]] \
   	  && running_client=1  && break 
   done
   
   if [ "${running_client:-0}" -ne 1 ]; then
    log "Not connected to Ethereum, retry in 5 seconds..."
-   verbose "Syncing:    $syncing (should be false)"
    verbose "Peers:      $peers (should be > 0)"
-   verbose "Last block: $timestamp (should be < 60)"
+   verbose "Last block: $timestamp (should be < 90)"
    verbose "Sanity:     $sanity (should be not empty)"
    sleep 5
    exec "$0" "$@"
@@ -91,15 +81,15 @@ fi
 [[ $SETZER_INTERVAL_SECONDS ]] || export SETZER_INTERVAL_SECONDS=60
 [[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=180
 
-[[ $SETZER_AUTO ]] && echo AUTO mode ON
+[[ $SETZER_AUTO ]] && log "AUTO mode ON"
 
 # Gas stuff
-[[ $SETZER_INITIAL_GAS_PRICE ]] || export SETZER_INITIAL_GAS_PRICE=$(bc <<< "`seth gas-price` / 3 ")
+[[ $SETZER_INITIAL_GAS_PRICE ]] || export SETZER_INITIAL_GAS_PRICE=$(setzer gas safe)
 [[ $SETZER_GAS_PRICE_INCREMENT ]] || export SETZER_GAS_PRICE_INCREMENT=`seth --to-wei 5 gwei`
 [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=`seth --to-wei 350 gwei`
 
 # NOTE: Nice way to see if bots are updated. Increase this by 1 on new versions :)
-export ETH_GAS=200010
+export ETH_GAS=200011
 
 # Initialization
 if ! [[ $SETZER_BOT_INIT ]]; then
@@ -163,14 +153,14 @@ if [[ $mined ]]; then
   #reset gas
   export PENDING_TRANSACTION_NONCE=
   reset_gas=$SETZER_INITIAL_GAS_PRICE
-  [[ $reset_gas ]] || reset_gas=`seth gas-price`
+  [[ $reset_gas ]] || reset_gas=`setzer gas safe`
   export ETH_GAS_PRICE=$reset_gas
 else
   if [[ $ptn ]]; then
     export CURRENT_LOOP=$(($CURRENT_LOOP + 1))
     # increase gas price
-    verbose "Increasing gas price by 10%"
-    newgasprice=$(bc <<< "$ETH_GAS_PRICE * 1.11 / 1")
+    verbose "Increasing gas price by 12%"
+    newgasprice=$(bc <<< "$ETH_GAS_PRICE * 1.2 / 1")
     if [[ $newgasprice -le $SETZER_MAX_GAS_PRICE ]]; then
       export ETH_GAS_PRICE=$newgasprice
       log "New gas price: $ETH_GAS_PRICE"
@@ -190,7 +180,7 @@ if [[ $needsupdate ]]; then
     # TODO: let user choose if setzer will handle starting gas
     if ! [[ $ptn ]]; then
       reset_gas=$SETZER_INITIAL_GAS_PRICE
-      [[ $reset_gas ]] || reset_gas=`seth gas-price`
+      [[ $reset_gas ]] || reset_gas=`setzer gas safe`
       export ETH_GAS_PRICE=$reset_gas
       nonce=$(seth nonce "$ETH_FROM")
       export ETH_NONCE=$nonce
