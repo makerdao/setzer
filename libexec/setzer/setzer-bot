@@ -53,9 +53,6 @@ function getnode {
 
 export PATH="$PATH:/usr/local/bin/:/usr/bin/"
 
-#get valid node
-getnode
-
 # Global configuration
 if [[ -e /etc/setzer.conf ]]; then
   . /etc/setzer.conf
@@ -68,6 +65,9 @@ if [[ -e $SETZER_CONF ]]; then
   . $SETZER_CONF
   #verbose "Imported configuration from $SETZER_CONF"
 fi
+
+#get valid node
+getnode
 
 [[ $ETH_FROM ]] || errors+=("No default account set. Please set it via ETH_FROM ")
 [[ $SETZER_FEED ]] || errors+=("No price feed set. Please set it via SETZER_FEED ")
