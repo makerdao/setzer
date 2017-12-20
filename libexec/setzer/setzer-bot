@@ -30,15 +30,12 @@ function verbose {
 function getnode {
   # Check if connected to node
   export RPC_TIMEOUT=${RPC_TIMEOUT:-15s}
-  for PORT in ${RPC_PORTS:-8545}; do
-    export ETH_RPC_PORT=$PORT
-    verbose "Trying on rpc port $ETH_RPC_PORT."
-  	  peers=$(timeout $RPC_TIMEOUT seth rpc net_peerCount 2> /dev/null) \
-      && timestamp=$(( $(date +%s) - $(timeout $RPC_TIMEOUT seth block latest timestamp 2>/dev/null || echo 0) )) \
-  	  && sanity=($(timeout $RPC_TIMEOUT setzer peek "$SETZER_FEED" 2> /dev/null || true))
-    [[ $peers -gt 0 ]] && [[ $timestamp -lt 90 ]] && [[ $sanity ]] \
-  	  && running_client=1  && break 
-  done
+  #verbose "Trying on rpc port $ETH_RPC_PORT."
+    peers=$(timeout $RPC_TIMEOUT seth rpc net_peerCount 2> /dev/null) \
+    && timestamp=$(( $(date +%s) - $(timeout $RPC_TIMEOUT seth block latest timestamp 2>/dev/null || echo 0) )) \
+    && sanity=($(timeout $RPC_TIMEOUT setzer peek "$SETZER_FEED" 2> /dev/null || true))
+  [[ $peers -gt 0 ]] && [[ $timestamp -lt 90 ]] && [[ $sanity ]] \
+    && running_client=1
   
   if [ "${running_client:-0}" -ne 1 ]; then
    log "Not connected to Ethereum, retry in 5 seconds..."
@@ -48,7 +45,7 @@ function getnode {
    sleep 5
    exec "$0" "$@"
   fi
-  verbose "Node running on RPC port $ETH_RPC_PORT."
+  #verbose "Node running on RPC port $ETH_RPC_PORT."
 }
 
 export PATH="$PATH:/usr/local/bin/:/usr/bin/"
@@ -83,13 +80,10 @@ getnode
 
 [[ $SETZER_AUTO ]] && log "AUTO mode ON"
 
-# Gas stuff
-[[ $SETZER_INITIAL_GAS_PRICE ]] || export SETZER_INITIAL_GAS_PRICE=$(setzer gas safe)
-[[ $SETZER_GAS_PRICE_INCREMENT ]] || export SETZER_GAS_PRICE_INCREMENT=`seth --to-wei 5 gwei`
 [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=`seth --to-wei 350 gwei`
 
 # NOTE: Nice way to see if bots are updated. Increase this by 1 on new versions :)
-export ETH_GAS=200011
+export ETH_GAS=200012
 
 # Initialization
 if ! [[ $SETZER_BOT_INIT ]]; then
@@ -105,9 +99,7 @@ if ! [[ $SETZER_BOT_INIT ]]; then
   echo "Price sources:       $SETZER_SOURCES"
   echo "Spread to update:    $SETZER_SPREAD %"
   echo ""
-  echo "Starting gas price:  $SETZER_INITIAL_GAS_PRICE wei"
   echo "Max gas price:       $SETZER_MAX_GAS_PRICE wei"
-  echo "Gas price increment: $SETZER_GAS_PRICE_INCREMENT wei"
   echo ""
   echo "Price check loop:    $SETZER_INTERVAL_SECONDS seconds"
   echo "Resend tx loop  :    $SETZER_WAIT_FOR_RESEND seconds"
@@ -125,6 +117,13 @@ fi
 old=($(setzer peek "$SETZER_FEED"))
 old=${old[0]}
 new=$(setzer average $SETZER_SOURCES)
+check_new=$(bc <<< "$new > 0")
+if ! [[ $check_new -eq "1" ]]; then
+  log "Price was 0. Waiting 10 seconds then trying again"
+  sleep 10
+  exec "$0" "$@"
+fi
+
 spread=$(setzer spread "$old" "$new")
 log "Old ($old) New ($new) Spread ($spread)"
 test=$(bc <<< "${spread#-} >= ${SETZER_SPREAD}")
