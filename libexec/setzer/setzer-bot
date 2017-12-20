@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### setzer-bot -- really cool bot
+### setzer-bot -- really cool feedbot
 ### Usage: setzer bot [options]
 ### --
 ###   Options:
@@ -150,11 +150,7 @@ if [[ $ptn ]]; then
 fi
 
 if [[ $mined ]]; then
-  #reset gas
   export PENDING_TRANSACTION_NONCE=
-  reset_gas=$SETZER_INITIAL_GAS_PRICE
-  [[ $reset_gas ]] || reset_gas=`setzer gas safe`
-  export ETH_GAS_PRICE=$reset_gas
 else
   if [[ $ptn ]]; then
     export CURRENT_LOOP=$(($CURRENT_LOOP + 1))
@@ -179,11 +175,10 @@ if [[ $needsupdate ]]; then
     # If there is no pending tx, reset initial gas price and nonce
     # TODO: let user choose if setzer will handle starting gas
     if ! [[ $ptn ]]; then
-      reset_gas=$SETZER_INITIAL_GAS_PRICE
-      [[ $reset_gas ]] || reset_gas=`setzer gas safe`
+      export ETH_NONCE=$(seth nonce "$ETH_FROM")
+      reset_gas=$(setzer gas safe)
+      [[ $reset_gas ]] || reset_gas=$(seth gas-price)
       export ETH_GAS_PRICE=$reset_gas
-      nonce=$(seth nonce "$ETH_FROM")
-      export ETH_NONCE=$nonce
       verbose "Creating new transaction with gas $ETH_GAS_PRICE and nonce $ETH_NONCE"
     fi
     until=$(date +%s -d'+6 hour')
@@ -191,7 +186,7 @@ if [[ $needsupdate ]]; then
     tx=$(setzer post "$SETZER_FEED" "$new" "$until" "$SETZER_MEDIANIZER")
     if [[ $tx ]]; then
       log $tx
-      export PENDING_TRANSACTION_NONCE=$nonce
+      export PENDING_TRANSACTION_NONCE=$ETH_NONCE
     else
       # No transaction created. Either nonce issues or needs higher gas price
       log "Error creating transaction..."
