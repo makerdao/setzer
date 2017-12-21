@@ -31,9 +31,9 @@ function getnode {
   # Check if connected to node
   export RPC_TIMEOUT=${RPC_TIMEOUT:-15s}
   #verbose "Trying on rpc port $ETH_RPC_PORT."
-    peers=$(timeout $RPC_TIMEOUT seth rpc net_peerCount 2> /dev/null) \
-    && timestamp=$(( $(date +%s) - $(timeout $RPC_TIMEOUT seth block latest timestamp 2>/dev/null || echo 0) )) \
-    && sanity=($(timeout $RPC_TIMEOUT setzer peek "$SETZER_FEED" 2> /dev/null || true))
+    peers="$(timeout $RPC_TIMEOUT seth rpc net_peerCount 2> /dev/null)" \
+    && timestamp="$(( $(date +%s) - $(timeout $RPC_TIMEOUT seth block latest timestamp 2>/dev/null || echo 0) ))" \
+    && sanity="$(timeout $RPC_TIMEOUT setzer peek "$SETZER_FEED" 2> /dev/null || true)"
   [[ $peers -gt 0 ]] && [[ $timestamp -lt 90 ]] && [[ $sanity ]] \
     && running_client=1
   
