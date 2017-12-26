@@ -151,7 +151,7 @@ else
     export CURRENT_LOOP=$(($CURRENT_LOOP + 1))
     # increase gas price
     verbose "Increasing gas price by 12%"
-    newgasprice=$(bc <<< "$ETH_GAS_PRICE * 1.2 / 1")
+    newgasprice=$(bc <<< "$ETH_GAS_PRICE * 1.12 / 1")
     if [[ $newgasprice -le $SETZER_MAX_GAS_PRICE ]]; then
       export ETH_GAS_PRICE=$newgasprice
       log "New gas price: $ETH_GAS_PRICE"
@@ -180,7 +180,7 @@ if [[ $needsupdate ]]; then
     log "Sending with nonce $ETH_NONCE and gas price $ETH_GAS_PRICE wei"
     tx=$(setzer post "$SETZER_FEED" "$new" "$until" "$SETZER_MEDIANIZER")
     if [[ $tx ]]; then
-      log $tx
+      log "$tx"
       export PENDING_TRANSACTION_NONCE=$ETH_NONCE
     else
       # No transaction created. Either nonce issues or needs higher gas price
@@ -197,6 +197,6 @@ elif [ $PENDING_TRANSACTION_NONCE ]; then
 else
   wait=$SETZER_INTERVAL_SECONDS
 fi
-log Waiting "$wait" seconds
+log "Waiting $wait seconds"
 sleep $wait
 exec "$0" "$@"
