@@ -30,22 +30,18 @@ function verbose {
 function getnode {
   # Check if connected to node
   export RPC_TIMEOUT=${RPC_TIMEOUT:-15s}
-  #verbose "Trying on rpc port $ETH_RPC_PORT."
-    peers=$(timeout $RPC_TIMEOUT seth rpc net_peerCount 2> /dev/null) \
-    && timestamp=$(( $(date +%s) - $(timeout $RPC_TIMEOUT seth block latest timestamp 2>/dev/null || echo 0) )) \
-    && sanity=($(timeout $RPC_TIMEOUT setzer peek "$SETZER_FEED" 2> /dev/null || true))
-  [[ $peers -gt 0 ]] && [[ $timestamp -lt 90 ]] && [[ $sanity ]] \
+    peers=$(timeout "$RPC_TIMEOUT" seth rpc net_peerCount 2> /dev/null || echo 0) \
+    && timestamp=$(( $(date +%s) - $(timeout "$RPC_TIMEOUT" seth block latest timestamp 2>/dev/null || echo 0) ))
+  [[ $peers -gt 0 ]] && [[ $timestamp -lt 90 ]] \
     && running_client=1
   
   if [ "${running_client:-0}" -ne 1 ]; then
    log "Not connected to Ethereum, retry in 5 seconds..."
    verbose "Peers:      $peers (should be > 0)"
    verbose "Last block: $timestamp (should be < 90)"
-   verbose "Sanity:     $sanity (should be not empty)"
    sleep 5
    exec "$0" "$@"
   fi
-  #verbose "Node running on RPC port $ETH_RPC_PORT."
 }
 
 export PATH="$PATH:/usr/local/bin/:/usr/bin/"
