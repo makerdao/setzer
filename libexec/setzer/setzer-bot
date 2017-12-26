@@ -24,7 +24,7 @@ function log {
 }
 
 function verbose {
-  [[ $SETZER_VERBOSE ]] && log "[V] $*"
+  [[ $SETZER_VERBOSE ]] && echo "[$(date "+%D %T")] [V] $*"
 }
 
 function getnode {
