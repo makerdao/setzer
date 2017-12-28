@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -e
+export LC_ALL=C
+
+sources="gdax gemini kraken"
+
+price () {
+  price+=($(timeout 5 setzer price "$1" 2> /dev/null || true))
+}
+
+for x in $sources; do
+  price $x
+done
+
+[[ ${#price[@]} -lt 3 ]] && exit 1
+
+datamash median 1 <<< $(echo ${price[@]} | tr " " "\n")

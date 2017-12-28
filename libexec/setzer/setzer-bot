@@ -65,11 +65,11 @@ getnode
 [[ $ETH_FROM ]] || errors+=("No default account set. Please set it via ETH_FROM ")
 [[ $SETZER_FEED ]] || errors+=("No price feed set. Please set it via SETZER_FEED ")
 [[ $SETZER_MEDIANIZER ]] || errors+=("No medianizer set. Please set it via SETZER_MEDIANIZER ")
-[[ $SETZER_SOURCES ]] || errors+=("No price sources set. Please set them via SETZER_SOURCES ")
+#[[ $SETZER_SOURCES ]] || errors+=("No price sources set. Please set them via SETZER_SOURCES ")
 
 [[ $errors ]] && { printf '%s\n' "${errors[@]}"; exit 1; }
 
-[[ $SETZER_SPREAD ]] || export SETZER_SPREAD=1
+[[ $SETZER_SPREAD ]] || export SETZER_SPREAD=2
 
 [[ $SETZER_INTERVAL_SECONDS ]] || export SETZER_INTERVAL_SECONDS=60
 [[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=180
@@ -79,7 +79,7 @@ getnode
 [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=`seth --to-wei 350 gwei`
 
 # NOTE: Nice way to see if bots are updated. Increase this by 1 on new versions :)
-export ETH_GAS=200012
+export ETH_GAS=200014
 
 # Initialization
 if ! [[ $SETZER_BOT_INIT ]]; then
@@ -112,10 +112,10 @@ fi
 
 old=($(setzer peek "$SETZER_FEED"))
 old=${old[0]}
-new=$(setzer average $SETZER_SOURCES)
+new=$(setzer price magic || echo 0)
 check_new=$(bc <<< "$new > 0")
 if ! [[ $check_new -eq "1" ]]; then
-  log "Price was 0. Waiting 10 seconds then trying again"
+  log "Price was invalid. Waiting 10 seconds then trying again"
   sleep 10
   exec "$0" "$@"
 fi
@@ -149,9 +149,10 @@ if [[ $mined ]]; then
 else
   if [[ $ptn ]]; then
     export CURRENT_LOOP=$(($CURRENT_LOOP + 1))
-    # increase gas price
-    verbose "Increasing gas price by 12%"
-    newgasprice=$(bc <<< "$ETH_GAS_PRICE * 1.12 / 1")
+    # increase gas price by 15%
+    # should be 10% but I can never get it to work...
+    verbose "Increasing gas price by 15%"
+    newgasprice=$(bc <<< "$ETH_GAS_PRICE * 1.15 / 1")
     if [[ $newgasprice -le $SETZER_MAX_GAS_PRICE ]]; then
       export ETH_GAS_PRICE=$newgasprice
       log "New gas price: $ETH_GAS_PRICE"
