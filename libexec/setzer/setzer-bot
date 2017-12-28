@@ -112,7 +112,13 @@ fi
 
 old=($(setzer peek "$SETZER_FEED"))
 old=${old[0]}
-new=$(setzer price magic || echo 0)
+
+if [[ $SETZER_SOURCES == *"mkr" ]]; then
+  new=$(setzer price mkr || echo 0)
+else
+  new=$(setzer price magic || echo 0)
+fi
+
 check_new=$(bc <<< "$new > 0")
 if ! [[ $check_new -eq "1" ]]; then
   log "Price was invalid. Waiting 10 seconds then trying again"
