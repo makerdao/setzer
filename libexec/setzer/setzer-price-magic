@@ -2,7 +2,7 @@
 set -e
 export LC_ALL=C
 
-sources="gdax gemini kraken"
+sources="gdax gemini kraken bitstamp bitfinex"
 
 price () {
   price+=($(timeout 5 setzer price "$1" 2> /dev/null || true))
