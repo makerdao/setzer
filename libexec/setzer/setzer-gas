@@ -14,5 +14,5 @@ esac;
 json=$(curl -sS "https://ethgasstation.info/json/ethgasAPI.json" 2> /dev/null || true)
 gas=$(jshon <<<"$json" -e $type -u 2> /dev/null || true)
 [[ $gas ]] || { seth gas-price; exit; }
-gas=$(bc <<< "${gas} / 10")
+gas=$(bc <<< "scale=5;${gas} / 10")
 echo $(seth --to-wei "$gas" gwei)
