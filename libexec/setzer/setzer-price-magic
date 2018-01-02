@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-export LC_ALL=C
+export LC_NUMERIC=C
 
 sources="gdax gemini kraken bitstamp bitfinex"
 
