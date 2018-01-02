@@ -27,23 +27,6 @@ function verbose {
   [[ $SETZER_VERBOSE ]] && echo "[$(date "+%D %T")] [V] $*"
 }
 
-function getnode {
-  # Check if connected to node
-  export RPC_TIMEOUT=${RPC_TIMEOUT:-15s}
-  while [ "${running_client:-0}" -ne 1 ]; do
-    peers="$(timeout "$RPC_TIMEOUT" seth rpc net_peerCount 2> /dev/null || echo 0)" \
-    && timestamp="$(( $(date +%s) - $(timeout "$RPC_TIMEOUT" seth block latest timestamp 2>/dev/null || echo 0) ))"
-    [[ $peers -gt 0 ]] && [[ $timestamp -lt 90 ]] && running_client=1
-  
-    log "Not connected to Ethereum, retry in 5 seconds..."
-    verbose "Peers:      $peers (should be > 0)"
-    verbose "Last block: $timestamp (should be < 90)"
-    sleep 5
-  done
-}
-
-export PATH="$PATH:/usr/local/bin/:/usr/bin/"
-
 # Global configuration
 if [[ -e /etc/setzer.conf ]]; then
   # shellcheck source=/etc/setzer.conf
@@ -59,8 +42,11 @@ if [[ -e $SETZER_CONF ]]; then
   #verbose "Imported configuration from $SETZER_CONF"
 fi
 
-#get valid node
-getnode
+# check we're connected to ethereum
+while [ ! "$(setzer connected)" ]; do
+  log "Not connected to Ethereum, retry in 5 seconds..."
+  sleep 5
+done
 
 [[ $ETH_FROM ]] || errors+=("No default account set. Please set it via ETH_FROM ")
 [[ $SETZER_FEED ]] || errors+=("No price feed set. Please set it via SETZER_FEED ")
@@ -76,7 +62,7 @@ getnode
 
 [[ $SETZER_AUTO ]] && log "AUTO mode ON"
 
-max_gas=$(seth --to-wei 350 gwei)
+max_gas=$(seth --to-wei 350 gwei 2> /dev/null || echo 350000000000 )
 [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=$max_gas
 
 # NOTE: Nice way to see if bots are updated. Increase this by 1 on new versions :)
