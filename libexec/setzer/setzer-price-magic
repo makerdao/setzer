@@ -14,4 +14,4 @@ done
 
 [[ ${#price[@]} -lt 3 ]] && exit 1
 
-tr " " "\n" <<< echo "${price[@]}" | datamash median 1
+tr " " "\n" <<< $(echo "${price[@]}") | datamash median 1
