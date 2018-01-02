@@ -30,10 +30,9 @@ function verbose {
 function getnode {
   # Check if connected to node
   export RPC_TIMEOUT=${RPC_TIMEOUT:-15s}
-    peers=$(timeout "$RPC_TIMEOUT" seth rpc net_peerCount 2> /dev/null || echo 0) \
-    && timestamp=$(( $(date +%s) - $(timeout "$RPC_TIMEOUT" seth block latest timestamp 2>/dev/null || echo 0) ))
-  [[ $peers -gt 0 ]] && [[ $timestamp -lt 90 ]] \
-    && running_client=1
+  peers="$(timeout "$RPC_TIMEOUT" seth rpc net_peerCount 2> /dev/null || echo 0)" \
+  && timestamp="$(( $(date +%s) - $(timeout "$RPC_TIMEOUT" seth block latest timestamp 2>/dev/null || echo 0) ))"
+  [[ $peers -gt 0 ]] && [[ $timestamp -lt 90 ]] && running_client=1
   
   if [ "${running_client:-0}" -ne 1 ]; then
    log "Not connected to Ethereum, retry in 5 seconds..."
