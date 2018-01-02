@@ -77,7 +77,7 @@ getnode
 [[ $SETZER_AUTO ]] && log "AUTO mode ON"
 
 max_gas=$(seth --to-wei 350 gwei)
-[[ $SETZER_MAX_GAS_PRICE ]] || export max_gas
+[[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=$max_gas
 
 # NOTE: Nice way to see if bots are updated. Increase this by 1 on new versions :)
 export ETH_GAS=200015
