@@ -180,7 +180,7 @@ if [[ $needsupdate ]]; then
     # TODO: let user choose if setzer will handle starting gas
     if ! [[ $ptn ]]; then
       nonce=$(seth nonce "$ETH_FROM")
-      export ETH_NONCE=nonce
+      export ETH_NONCE=$nonce
       reset_gas=$(setzer gas safe)
       [[ $reset_gas ]] || reset_gas=$(seth gas-price)
       export ETH_GAS_PRICE=$reset_gas
@@ -202,7 +202,7 @@ fi
 
 if [ $error_wait_seconds ]; then
   wait=$error_wait_seconds
-elif [ $PENDING_TRANSACTION_NONCE ]; then
+elif [ "$PENDING_TRANSACTION_NONCE" ]; then
   wait=$SETZER_WAIT_FOR_RESEND
 else
   wait=$SETZER_INTERVAL_SECONDS
