@@ -2,4 +2,4 @@
 set -e
 json=$(curl -sS "https://poloniex.com/public?command=returnTicker")
 price=$(jshon <<<"$json" -e USDT_ETH -e last -u)
-echo $price
+echo "$price"

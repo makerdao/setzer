@@ -6,4 +6,4 @@
 set -e
 [[ $# = 1 ]] || setzer --bad-usage "$0"
 valid=($(setzer peek "$1"))
-echo ${valid[1]}
+echo "${valid[1]}"

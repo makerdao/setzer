@@ -6,7 +6,7 @@ for file in ${0%/*}/$name-price-*; do
     continue
   else
     if [[ "${file##*-}" != "ls" ]]; then
-      printf "%14s : %s\n" "${file##*-}" $($file)
+      printf "%14s : %s\n" "${file##*-}" "$($file)"
     fi
   fi
 done

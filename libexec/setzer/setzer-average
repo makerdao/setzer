@@ -6,12 +6,12 @@
 ### If a source is unavailable, ignore
 ### See `setzer price` for sources
 ### Example: setzer average coinbase etherscan gemini
-set -e
+#set -e
 [[ $# -ge 1 ]] || setzer --bad-usage "$0"
 
-for file in $@; do
-  price=$("${0%/*}/setzer-price-$file") || true
-  avg+=($price)
+for file in "$@"; do
+  price=$("${0%/*}/setzer-price-$file") || false
+  [[ $price ]] && avg+=($price)
 done
 
-awk '{s+=$1}END{print s/NR}' RS=" " <<< ${avg[@]}
+[[ ${avg[*]} ]] && awk '{s+=$1}END{print s/NR}' RS=" " <<< "${avg[@]}"

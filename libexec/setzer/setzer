@@ -28,7 +28,9 @@ set -e
 
 if ! [[ $SETZER_INIT ]]; then
   export SETZER_INIT=1
+  # shellcheck source=/home/nanexcool/.setzerrc
   [[ -e ~/.setzerrc ]] && . ~/.setzerrc
+  # shellcheck source=/home/nanexcool/.setzerrc
   [[ $(pwd) != ~ && -e .setzerrc ]] && . .setzerrc
 fi
 

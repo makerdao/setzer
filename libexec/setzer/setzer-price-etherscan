@@ -2,4 +2,4 @@
 set -e
 json=$(curl -H 'Cache-Control: no-cache' -sS "https://api.etherscan.io/api?module=stats&action=ethprice&apikey=N5TICDBVG4MHDS7CGPJ9MHXRYC1Y84963N")
 price=$(jshon <<<"$json" -e result -e ethusd -u)
-echo $price
+echo "$price"

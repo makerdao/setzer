@@ -2,4 +2,4 @@
 set -e
 json=$(curl -sS "https://api.livecoin.net/exchange/ticker?currencyPair=ETH/USD")
 price=$(jshon <<<"$json" -e last -u)
-echo $price
+echo "$price"

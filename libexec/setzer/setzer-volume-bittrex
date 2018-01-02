@@ -2,4 +2,4 @@
 set -e
 json=$(curl -sS "https://bittrex.com/api/v1.1/public/getmarketsummary?market=usdt-eth")
 volume=$(jshon <<<"$json" -e result -e 0 -e Volume -u)
-echo $volume
+echo "$volume"

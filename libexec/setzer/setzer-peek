@@ -8,5 +8,5 @@ set -e
 DSVALUE=$(seth --to-address "$1")
 
 now=($(seth call "$DSVALUE" "peek()(bytes32,bool)"))
-seth --to-fix 18 $(seth --to-dec "${now[0]}")
+seth --to-fix 18 "$(seth --to-dec "${now[0]}")"
 echo "${now[1]}"

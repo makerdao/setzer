@@ -2,4 +2,4 @@
 set -e
 json=$(curl -sS "https://bitbay.net/API/Public/ETHUSD/ticker.json")
 volume=$(jshon <<<"$json" -e volume -u)
-echo $volume
+echo "$volume"

@@ -2,4 +2,4 @@
 set -e
 json=$(curl -sS "https://api.gdax.com/products/ETH-USD/ticker")
 volume=$(jshon <<<"$json" -e volume -u)
-echo $volume
+echo "$volume"

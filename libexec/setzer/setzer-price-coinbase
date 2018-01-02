@@ -2,4 +2,4 @@
 set -e
 json=$(curl -sS "https://api.coinbase.com/v2/prices/ETH-USD/spot")
 price=$(jshon <<<"$json" -e data -e amount -u)
-echo $price
+echo "$price"

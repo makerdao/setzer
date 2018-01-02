@@ -8,4 +8,4 @@ set -e
 zzz=$(seth call "$1" "zzz()(uint256)")
 zzz=$(seth --to-dec "$zzz")
 now=$(date +%s)
-echo $(expr $zzz - $now)
+echo $(( "$zzz" - "$now"))
