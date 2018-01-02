@@ -71,6 +71,8 @@ if ! [[ $SETZER_BOT_INIT ]]; then
   export SETZER_BOT_INIT=1
   export SETH_ASYNC=yes
 
+  export PATH="$PATH:/usr/local/bin/:/usr/bin/"
+
   echo "--------- STARTING SETZER BOT ---------"
   echo "Bot started $(date)"
   
