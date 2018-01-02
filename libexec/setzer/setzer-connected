@@ -3,5 +3,5 @@ set -e
 timeout=10s
 now=$(date +%s)
 timestamp="$(timeout "$timeout" seth block latest timestamp 2>/dev/null || echo 0)"
-valid="$(( "$now" - "$timestamp" ))"
+valid=$(echo "$timestamp" - "$now" | bc)
 [[ $valid -lt 90 ]] || exit 1
