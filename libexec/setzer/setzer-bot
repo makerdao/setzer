@@ -20,11 +20,11 @@
 #set -ex
 
 function log {
-  echo "[$(date "+%D %T")] $*"
+  echo "[$(date "+%D %T")] $1"
 }
 
 function verbose {
-  [[ $SETZER_VERBOSE ]] && echo "[$(date "+%D %T")] [V] $*"
+  [[ $SETZER_VERBOSE ]] && echo "[$(date "+%D %T")] [V] $1"
 }
 
 # Global configuration
