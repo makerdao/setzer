@@ -80,7 +80,7 @@ max_gas=$(seth --to-wei 350 gwei)
 [[ $SETZER_MAX_GAS_PRICE ]] || export max_gas
 
 # NOTE: Nice way to see if bots are updated. Increase this by 1 on new versions :)
-export ETH_GAS=200014
+export ETH_GAS=200015
 
 # Initialization
 if ! [[ $SETZER_BOT_INIT ]]; then
