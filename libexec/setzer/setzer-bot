@@ -43,7 +43,7 @@ if [[ -e $SETZER_CONF ]]; then
 fi
 
 # check we're connected to ethereum
-while [ ! "$(setzer connected)" ]; do
+while [ "$(setzer connected)" -ne true ]; do
   log "Not connected to Ethereum, retry in 5 seconds..."
   sleep 5
 done

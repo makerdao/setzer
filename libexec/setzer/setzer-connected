@@ -5,3 +5,4 @@ now=$(date +%s)
 timestamp=$(timeout "$timeout" seth block latest timestamp 2>/dev/null || echo 0)
 valid=$(echo "$now" - "$timestamp" | bc)
 [[ $valid -lt 90 ]] || exit 1
+echo true
