@@ -60,8 +60,6 @@ done
 [[ $SETZER_INTERVAL_SECONDS ]] || export SETZER_INTERVAL_SECONDS=60
 [[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=180
 
-[[ $SETZER_AUTO ]] && log "AUTO mode ON"
-
 max_gas=$(seth --to-wei 350 gwei 2> /dev/null || echo 350000000000 )
 [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=$max_gas
 
@@ -79,10 +77,11 @@ if ! [[ $SETZER_BOT_INIT ]]; then
   echo "Default account:     $ETH_FROM"
   echo "Feed address:        $SETZER_FEED"
   echo "Medianizer address:  $SETZER_MEDIANIZER"
-  echo "Price sources:       $SETZER_SOURCES"
   echo "Spread to update:    $SETZER_SPREAD %"
   echo ""
   echo "Max gas price:       $SETZER_MAX_GAS_PRICE wei"
+  echo ""
+  echo "Auto Mode:           $SETZER_AUTO"
   echo ""
   echo "Price check loop:    $SETZER_INTERVAL_SECONDS seconds"
   echo "Resend tx loop  :    $SETZER_WAIT_FOR_RESEND seconds"
