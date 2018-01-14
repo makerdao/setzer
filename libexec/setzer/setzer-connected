@@ -1,8 +1,18 @@
 #!/usr/bin/env bash
+
 set -e
-timeout=10s
+
+# check to see if timeout is from busybox
+TIMEOUT_PATH=$(realpath $(which timeout))
+if [[ $TIMEOUT_PATH =~ "busybox" ]]; then
+    busytimeflag="-t"
+else
+    busytimeflag=""
+fi
+
 now=$(date +%s)
-timestamp=$(timeout "$timeout" seth block latest timestamp 2>/dev/null || echo 0)
+timeout="10"
+timestamp=$(timeout $busytimeflag $timeout seth block latest timestamp 2>/dev/null || echo 0)
 valid=$(echo "$now" - "$timestamp" | bc)
 [[ $valid -lt 90 ]] || exit 1
 echo true
