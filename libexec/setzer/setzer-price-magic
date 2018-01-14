@@ -2,10 +2,18 @@
 set -e
 export LC_NUMERIC=C
 
+# check to see if timeout is from busybox
+TIMEOUT_PATH=$(realpath $(which timeout))
+if [[ $TIMEOUT_PATH =~ "busybox" ]]; then
+    busytimeflag="-t"
+else
+    busytimeflag=""
+fi
+
 sources="gdax gemini kraken bitstamp bitfinex"
 
 price () {
-  price+=($(timeout 5 setzer price "$1" 2> /dev/null || true))
+  price+=($(timeout $busytimeflag 5 setzer price "$1" 2> /dev/null || true))
 }
 
 for x in $sources; do
