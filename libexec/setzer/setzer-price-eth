@@ -2,7 +2,7 @@
 set -e
 export LC_NUMERIC=C
 
-sources="bibox oasis okex"
+sources="gdax gemini kraken bitstamp"
 
 addprice () {
   price=$(timeout 5 setzer price "$1" 2> /dev/null || true)
@@ -15,6 +15,6 @@ for x in $sources; do
   addprice "$x"
 done
 
-[[ ${#prices[@]} -lt 2 ]] && exit 1
+[[ ${#prices[@]} -lt 3 ]] && exit 1
 
 tr " " "\\n" <<< "${prices[@]}" | datamash median 1

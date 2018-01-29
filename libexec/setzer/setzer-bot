@@ -44,8 +44,8 @@ fi
 
 # check we're connected to ethereum
 while [ "$(setzer connected)" != "true" ]; do
-  log "Not connected to Ethereum, retry in 5 seconds..."
-  sleep 5
+  log "Not connected to Ethereum, retry in 10 seconds..."
+  sleep 10
 done
 
 [[ $ETH_FROM ]] || errors+=("No default account set. Please set it via ETH_FROM ")
@@ -57,14 +57,14 @@ done
 
 [[ $SETZER_SPREAD ]] || export SETZER_SPREAD=2
 
-[[ $SETZER_INTERVAL_SECONDS ]] || export SETZER_INTERVAL_SECONDS=60
-[[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=180
+[[ $SETZER_INTERVAL_SECONDS ]] || export SETZER_INTERVAL_SECONDS=120
+[[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=240
 
 max_gas=$(seth --to-wei 350 gwei 2> /dev/null || echo 350000000000 )
 [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=$max_gas
 
 # NOTE: Nice way to see if bots are updated. Increase this by 1 on new versions :)
-export ETH_GAS=200016
+export ETH_GAS=200017
 
 # Initialization
 if ! [[ $SETZER_BOT_INIT ]]; then
@@ -104,13 +104,13 @@ old=${feed[0]}
 if [[ $SETZER_SOURCES == *"mkr" ]]; then
   new=$(setzer price mkr || echo 0)
 else
-  new=$(setzer price magic || echo 0)
+  new=$(setzer price eth || echo 0)
 fi
 
 check_new=$(bc <<< "$new > 0")
 if ! [[ $check_new -eq "1" ]]; then
-  log "Price was invalid. Waiting 10 seconds then trying again"
-  sleep 10
+  log "Price was invalid. Waiting 30 seconds then trying again"
+  sleep 30
   exec "$0" "$@"
 fi
 

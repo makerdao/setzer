@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+json=$(curl -sS "https://www.okex.com/api/v1/ticker.do?symbol=mkr_eth")
+price=$(jshon <<<"$json" -e ticker -e last -u)
+eth=$(setzer read 0x729D19f657BD0614b4985Cf1D82531c67569197B)
+bc <<<"$price * $eth"
