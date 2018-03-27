@@ -2,7 +2,7 @@
 set -e
 export LC_NUMERIC=C
 
-sources="gdax gemini kraken bitstamp"
+sources="bitstamp gdax gemini kraken"
 
 addprice () {
   price=$(timeout 5 setzer price "$1" 2> /dev/null || true)

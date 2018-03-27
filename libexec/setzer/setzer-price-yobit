@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-set -e
-json=$(curl -sS "https://yobit.net/api/2/eth_usd/ticker")
-price=$(jshon <<<"$json" -e ticker -e last -u)
-echo "$price"

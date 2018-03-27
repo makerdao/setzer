@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-set -e
-json=$(curl -sS "https://bittrex.com/api/v1.1/public/getmarketsummary?market=usdt-eth")
-price=$(jshon <<<"$json" -e result -e 0 -e Last -u)
-echo "$price"
