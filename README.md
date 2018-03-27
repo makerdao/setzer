@@ -16,10 +16,8 @@
   |`help`      |      print help about setzer(1) or one of its subcommands  |
   |`peek`      |      peek a dsvalue, dscache or medianizer                 |
   |`poke`      |      poke a medianizer                                     |
-  |`poker`     |      update a poker                                        |
   |`post`      |      update a ds-price                                     |
   |`price`     |      show ETH/USD price from `<source>`                    |
-  |`prod`      |      update a ds-cache                                     |
   |`read`      |      read a dsvalue, dscache or medianizer                 |
   |`set`       |      set next feed of a medianizer                         |
   |`spread`    |      variance of 2 values in %                             |
@@ -30,6 +28,13 @@
 
 # INSTALLATION
 
+Install dependencies with Nix:
+
+```
+nix-channel --add https://nix.dapphub.com/pkgs/dapphub
+nix-channel --update
+nix-env -iA dapphub.{seth,jshon}
+```
    |                |                                        |
    |----------------|----------------------------------------| 
    |`make link`     |  install setzer(1) into `/usr/local`   |  
@@ -85,10 +90,6 @@ There are several extra options but you generally will not modify them.
   #default 15s
   export RPC_TIMEOUT=15s
 ```
-# DEPENDENCIES
-   seth(1)         https://github.com/dapphub/seth  
-   curl(1)         https://curl.haxx.se/  
-   jshon(1)        https://github.com/mbrock/jshon/
 
 # OPTIONS
    You can provide any `seth` option to commands that send transactions.  
