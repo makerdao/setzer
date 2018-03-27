@@ -7,6 +7,8 @@ set -e
 name=setzer
 
 if [[ $1 ]]; then
+  # shellcheck disable=SC2018
+  # shellcheck disable=SC2019
   source=$(tr A-Z a-z <<<"$1")
   exec "$0-$source"
 fi

@@ -7,6 +7,7 @@ set -e
 [[ $1 ]] || setzer --bad-usage "$0"
 DSVALUE=$(seth --to-address "$1")
 
-now=($(seth call "$DSVALUE" "peek()(bytes32,bool)"))
+now=$(seth call "$DSVALUE" "peek()(bytes32,bool)")
+mapfile -t now <<< "$now"
 seth --to-fix 18 "$(seth --to-dec "${now[0]}")"
 echo "${now[1]}"

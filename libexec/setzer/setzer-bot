@@ -29,7 +29,7 @@ function verbose {
 
 # Global configuration
 if [[ -e /etc/setzer.conf ]]; then
-  # shellcheck source=/etc/setzer.conf
+  # shellcheck source=/dev/null
   . "/etc/setzer.conf"
   #verbose "Imported configuration from /etc/setzer.conf"
 fi
@@ -37,7 +37,7 @@ fi
 # Local configuration (via -C or --config)
 # Useful for running multiple bots on one box
 if [[ -e $SETZER_CONF ]]; then
-  # shellcheck source=/etc/setzer.conf
+  # shellcheck source=/dev/null
   . "$SETZER_CONF"
   #verbose "Imported configuration from $SETZER_CONF"
 fi
@@ -98,7 +98,8 @@ if [ "$expires" -lt 3600 ]; then
   needsupdate="yes"
 fi
 
-feed=($(setzer peek "$SETZER_FEED"))
+feed=$(setzer peek "$SETZER_FEED")
+mapfile -t feed <<< "$feed"
 old=${feed[0]}
 
 if [[ $SETZER_SOURCES == *"mkr" ]]; then

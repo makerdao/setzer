@@ -28,9 +28,9 @@ set -e
 
 if ! [[ $SETZER_INIT ]]; then
   export SETZER_INIT=1
-  # shellcheck source=/home/nanexcool/.setzerrc
+  # shellcheck source=/dev/null
   [[ -e ~/.setzerrc ]] && . ~/.setzerrc
-  # shellcheck source=/home/nanexcool/.setzerrc
+  # shellcheck source=/dev/null
   [[ $(pwd) != ~ && -e .setzerrc ]] && . .setzerrc
 fi
 
@@ -60,7 +60,7 @@ while [[ $1 ]]; do
        --gas-inc)    shift; export SETZER_GAS_PRICE_INCREMENT=$1;;
        --gas-max)    shift; export SETZER_MAX_GAS_PRICE=$1;;
 
-    *) printf "${0##*/}: internal error: %q\n" "$1"; exit 1
+    *) printf "${0##*/}: internal error: %q\\n" "$1"; exit 1
   esac; shift
 done
 

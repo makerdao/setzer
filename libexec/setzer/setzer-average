@@ -11,7 +11,7 @@
 
 for file in "$@"; do
   price=$("${0%/*}/setzer-price-$file") || false
-  [[ $price ]] && avg+=($price)
+  [[ $price ]] && avg+=("$price")
 done
 
 [[ ${avg[*]} ]] && awk '{s+=$1}END{print s/NR}' RS=" " <<< "${avg[@]}"

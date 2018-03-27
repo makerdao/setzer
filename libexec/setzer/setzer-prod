@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-### setzer-prod -- update a ds-cache
-### Usage: setzer prod <target> <value> <timestamp>
-###
-### Update <target> with <value> and <timestamp> expiration
-set -e
-[[ $# -ge 3 ]] || setzer --bad-usage "$0"
-zzz=$(seth --to-uint256 "$3")
-(set -x; seth send "$1" "prod(bytes32,uint128)" "$2" "$zzz" "${@:4}")
