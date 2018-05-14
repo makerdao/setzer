@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+json=$(curl -sS "https://api.coinmarketcap.com/v2/ticker/1104/")
+price=$(jshon <<<"$json" -e data -e quotes -e USD -e price -u)
+echo "$price"
