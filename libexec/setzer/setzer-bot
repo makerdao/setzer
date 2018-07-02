@@ -57,14 +57,14 @@ done
 
 [[ $SETZER_SPREAD ]] || export SETZER_SPREAD=2
 
-[[ $SETZER_INTERVAL_SECONDS ]] || export SETZER_INTERVAL_SECONDS=120
-[[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=240
+[[ $SETZER_INTERVAL_SECONDS ]] || export SETZER_INTERVAL_SECONDS=600
+[[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=600
 
-max_gas=$(seth --to-wei 350 gwei 2> /dev/null || echo 350000000000 )
+max_gas=$(seth --to-wei 500 gwei 2> /dev/null || echo 500000000000 )
 [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=$max_gas
 
 # NOTE: Nice way to see if bots are updated. Increase this by 1 on new versions :)
-export ETH_GAS=200018
+export ETH_GAS=200019
 
 # Initialization
 if ! [[ $SETZER_BOT_INIT ]]; then
@@ -93,8 +93,8 @@ fi
 
 expires=$(setzer expires "$SETZER_FEED")
 log "Expires in $(setzer --format "$expires")"
-if [ "$expires" -lt 3600 ]; then
-  log "Expires in less than an hour, will update."
+if [ "$expires" -lt 7200 ]; then
+  log "Expires in less than two hours, will update."
   needsupdate="yes"
 fi
 
@@ -110,8 +110,8 @@ fi
 
 check_new=$(bc <<< "$new > 0")
 if ! [[ $check_new -eq "1" ]]; then
-  log "Price was invalid. Waiting 30 seconds then trying again"
-  sleep 30
+  log "Price was invalid. Waiting 1 minute then trying again"
+  sleep 60
   exec "$0" "$@"
 fi
 
@@ -145,12 +145,19 @@ else
   if [[ $ptn ]]; then
     loop=$(( CURRENT_LOOP + 1 ))
     export CURRENT_LOOP=$loop
-    # increase gas price by 15%
-    # should be 10% but I can never get it to work...
-    verbose "Increasing gas price by 15%"
-    newgasprice=$(bc <<< "$ETH_GAS_PRICE * 1.15 / 1")
-    if [[ $newgasprice -le $SETZER_MAX_GAS_PRICE ]]; then
-      export ETH_GAS_PRICE=$newgasprice
+    
+    current_gas_price=$(seth gas-price)
+    minimum_new_gas_price=$(bc <<< "$ETH_GAS_PRICE * 1.15 / 1")
+    
+    if [[ $current_gas_price -le $minimum_new_gas_price ]]; then
+      new_gas_price=$minimum_new_gas_price
+    else
+      new_gas_price=$current_gas_price
+    fi
+    
+    export ETH_GAS_PRICE=$new_gas_price
+    
+    if [[ $new_gas_price -le $SETZER_MAX_GAS_PRICE ]]; then
       log "New gas price: $ETH_GAS_PRICE"
       needsupdate="yes"
     else
@@ -169,12 +176,12 @@ if [[ $needsupdate ]]; then
     if ! [[ $ptn ]]; then
       nonce=$(seth nonce "$ETH_FROM")
       export ETH_NONCE=$nonce
-      reset_gas=$(setzer gas safe)
+      reset_gas=$(seth gas-price)
       [[ $reset_gas ]] || reset_gas=$(seth gas-price)
       export ETH_GAS_PRICE=$reset_gas
       verbose "Creating new transaction with gas $ETH_GAS_PRICE and nonce $ETH_NONCE"
     fi
-    until=$(date +%s -d'+6 hour')
+    until=$(date +%s -d'+12 hour')
     log "Sending with nonce $ETH_NONCE and gas price $ETH_GAS_PRICE wei"
     tx=$(setzer post "$SETZER_FEED" "$new" "$until" "$SETZER_MEDIANIZER")
     if [[ $tx ]]; then

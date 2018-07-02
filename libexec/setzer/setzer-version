@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 cat <<.
-setzer 0.1.18
+setzer 0.1.19
 Copyright (C) 2017 - 2018  Mariano Conti <nanexcool@gmail.com
 License: GNU GPL version 3 or later <https://gnu.org/licenses/gpl>.
 This is free software: you are free to change and redistribute it.
