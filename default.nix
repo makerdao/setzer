@@ -1,7 +1,5 @@
-{ stdenv, makeWrapper, lib, fetchFromGitHub
-, seth, curl, jshon, bc, gnused, which, perl
-, datamash
-}:
+{ stdenv, makeWrapper, lib, fetchFromGitHub, glibcLocales
+, seth, curl, jshon, bc, gnused, which, perl, datamash }:
 
 stdenv.mkDerivation rec {
   name = "setzer-${version}";
@@ -14,7 +12,10 @@ stdenv.mkDerivation rec {
   postInstall = let path = lib.makeBinPath [
     seth curl jshon bc gnused which perl datamash
   ]; in ''
-    wrapProgram "$out/bin/setzer" --prefix PATH : "${path}"
+    wrapProgram "$out/bin/setzer" --prefix PATH : "${path}" \
+      ${if glibcLocales != null then
+        "--set LOCALE_ARCHIVE \"${glibcLocales}\"/lib/locale/locale-archive"
+        else ""}
   '';
 
   meta = with lib; {
