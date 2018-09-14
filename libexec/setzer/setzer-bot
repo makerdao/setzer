@@ -104,7 +104,11 @@ old=${feed[0]}
 
 if [[ $SETZER_SOURCES == *"mkr" ]]; then
   new=$(setzer price mkr || echo 0)
-else
+elif [[ $SETZER_SOURCES == *"rep" ]]; then
+  new=$(setzer price rep || echo 0)
+elif [[ $SETZER_SOURCES == *"poly" ]]; then
+  new=$(setzer price poly || echo 0)
+else 
   new=$(setzer price eth || echo 0)
 fi
 
