@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -e
 
-setzer price poly-cmc
+setzer price poly-cryptocompare

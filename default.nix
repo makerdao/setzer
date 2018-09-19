@@ -3,7 +3,7 @@
 
 stdenv.mkDerivation rec {
   name = "setzer-${version}";
-  version = "0.1.19";
+  version = "0.1.20";
   src = ./.;
 
   nativeBuildInputs = [makeWrapper];

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+json=$(curl -sS "https://min-api.cryptocompare.com/data/price?fsym=POLY&tsyms=USD")
+price=$(jshon <<<"$json" -e USD -u)
+echo "$price"
