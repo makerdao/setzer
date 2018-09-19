@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+### setzer-sources -- returns price sources for <asset>
+### Usage: setzer sources <asset>
+###
+### Returns price sources for <asset>
+set -e
+
+[[ $1 ]] || setzer --bad-usage "$0"
+name=setzer
+for file in ${0%/*}/$name-price-$1-*; do
+  if [[ -L $file ]]; then
+    continue
+  else
+    if [[ "${file##*-}" != "ls" ]]; then
+      echo "${file##*-}"
+    fi
+  fi
+done
