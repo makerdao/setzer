@@ -60,11 +60,14 @@ done
 [[ $SETZER_INTERVAL_SECONDS ]] || export SETZER_INTERVAL_SECONDS=300
 [[ $SETZER_WAIT_FOR_RESEND ]] || export SETZER_WAIT_FOR_RESEND=300
 
+[[ $SETZER_NEXT_EXPIRATION_HOURS ]] || export SETZER_NEXT_EXPIRATION_HOURS=12
+[[ $SETZER_EXPIRES_IN_SECONDS ]] || export SETZER_EXPIRES_IN_SECONDS=3600
+
 max_gas=$(seth --to-wei 500 gwei 2> /dev/null || echo 500000000000 )
 [[ $SETZER_MAX_GAS_PRICE ]] || export SETZER_MAX_GAS_PRICE=$max_gas
 
 # NOTE: Nice way to see if bots are updated. Increase this by 1 on new versions :)
-export ETH_GAS=200020
+export ETH_GAS=200200
 
 # Initialization
 if ! [[ $SETZER_BOT_INIT ]]; then
@@ -93,8 +96,8 @@ fi
 
 expires=$(setzer expires "$SETZER_FEED")
 log "Expires in $(setzer --format "$expires")"
-if [ "$expires" -lt 7200 ]; then
-  log "Expires in less than two hours, will update."
+if [ "$expires" -lt "$SETZER_EXPIRES_IN_SECONDS" ]; then
+  log "Expires soon, will update..."
   needsupdate="yes"
 fi
 
@@ -185,7 +188,7 @@ if [[ $needsupdate ]]; then
       export ETH_GAS_PRICE=$reset_gas
       verbose "Creating new transaction with gas $ETH_GAS_PRICE and nonce $ETH_NONCE"
     fi
-    until=$(date +%s -d'+12 hour')
+    until=$(date +%s -d'+'$SETZER_NEXT_EXPIRATION_HOURS' hour')
     log "Sending with nonce $ETH_NONCE and gas price $ETH_GAS_PRICE wei"
     tx=$(setzer post "$SETZER_FEED" "$new" "$until" "$SETZER_MEDIANIZER")
     if [[ $tx ]]; then
