@@ -28,6 +28,8 @@
 
 # INSTALLATION
 
+`setzer` depends on [seth](https://dapp.tools/seth/) and `jshon`.
+
 Install dependencies with Nix:
 
 ```
@@ -35,6 +37,9 @@ nix-channel --add https://nix.dapphub.com/pkgs/dapphub
 nix-channel --update
 nix-env -iA dapphub.{seth,jshon}
 ```
+
+Or follow installation process from [Dapp tools Installing](https://dapp.tools)
+
    |                |                                        |
    |----------------|----------------------------------------| 
    |`make link`     |  install setzer(1) into `/usr/local`   |  
