@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -e
+json=$(curl -sS "https://api.kraken.com/0/public/Ticker?pair=XREPZEUR")
+price=$(jshon <<<"$json" -e result -e XREPZEUR -e c -e 0 -u)
+json=$(curl -sS "https://free.currencyconverterapi.com/api/v6/convert?q=EUR_USD&compact=y")
+eur=$(jshon <<<"$json" -e EUR_USD -e val)
+bc <<<"$price * $eur"

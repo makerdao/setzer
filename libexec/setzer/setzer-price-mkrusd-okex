@@ -2,5 +2,5 @@
 set -e
 json=$(curl -sS "https://www.okex.com/api/v1/ticker.do?symbol=mkr_eth")
 price=$(jshon <<<"$json" -e ticker -e last -u)
-eth=$(setzer price ethusd)
+eth=$(setzer price eth)
 bc <<<"$price * $eth"

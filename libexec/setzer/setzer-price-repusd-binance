@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -e
+json=$(curl -sS "https://www.binance.com/api/v3/ticker/price?symbol=REPBTC")
+price=$(jshon <<<"$json" -e price -u)
+#todo replace with 'setzer price btcusd'
+json=$(curl -sS "https://api.coinmarketcap.com/v2/ticker/1/")
+btc=$(jshon <<<"$json" -e data -e quotes -e USD -e price -u)
+bc <<<"$price * $btc"

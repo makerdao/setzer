@@ -2,5 +2,5 @@
 set -e
 json=$(curl -sS "http://api.oasisdex.com/v1/markets/mkr/eth")
 price=$(jshon <<<"$json" -e data -e price -u)
-eth=$(setzer price ethusd)
+eth=$(setzer price eth)
 bc <<<"$price * $eth"
