@@ -6,4 +6,4 @@ price=$(printf "%.9f" $price)
 #todo replace with 'setzer price btcusd'
 json=$(curl -sS "https://api.coinmarketcap.com/v2/ticker/1/")
 btc=$(jshon <<<"$json" -e data -e quotes -e USD -e price -u)
-bc <<<"$price * $btc"
+bc <<<"$price * $btc" | awk '{printf "%f", $0}'
