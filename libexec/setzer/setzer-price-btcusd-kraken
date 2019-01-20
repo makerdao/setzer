@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+json=$(curl -sS "https://api.kraken.com/0/public/Ticker?pair=XBTUSD")
+price=$(jshon <<<"$json" -e result -e XXBTZUSD -e c -e 0 -u)
+echo "$price"

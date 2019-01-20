@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -e
+export LC_NUMERIC=C
+
+mapfile -t sources < <(setzer sources btcusd)
+
+addprice () {
+  price=$(timeout 5 setzer price btcusd-"$1" 2> /dev/null || true)
+  if [[ $price ]]; then
+    if [[ $price =~ ^[+-]?[0-9]+\.?[0-9]*$  ]]; then
+      prices+=( "$price" )
+    fi
+  fi
+}
+
+for x in "${sources[@]}"; do
+  addprice "$x"
+done
+
+[[ ${#prices[@]} -lt 3 ]] && exit 1
+
+tr " " "\\n" <<< "${prices[@]}" | datamash median 1

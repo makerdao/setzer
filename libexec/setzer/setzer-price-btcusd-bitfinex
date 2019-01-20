@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+json=$(curl -sS "https://api.bitfinex.com/v2/ticker/tBTCUSD")
+jshon <<<"$json" -e 6
+#todo convert USDT price to USD

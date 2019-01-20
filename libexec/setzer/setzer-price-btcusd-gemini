@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+json=$(curl -sS "https://api.gemini.com/v1/pubticker/btcusd")
+price=$(jshon <<<"$json" -e last -u)
+echo "$price"
