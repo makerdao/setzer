@@ -2,4 +2,4 @@
 set -e
 json=$(curl -sS "https://min-api.cryptocompare.com/data/price?fsym=POLY&tsyms=USD")
 price=$(jshon <<<"$json" -e USD -u)
-echo "$price"
+echo "$price" | awk '{printf "%f", $0}'
