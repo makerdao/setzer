@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -e
+json=$(curl -sS "https://api.kyber.network/buy_rate?id=0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2&qty=2.5")
+numEth=$(jshon <<<"$json" -e data -e 0 -e src_qty -e 0 -u)
+numMkr=$(jshon <<<"$json" -e data -e 0 -e dst_qty -e 0 -u)
+eth_usd=$(setzer price eth)
+bc -l <<<"$numEth / $numMkr * $eth_usd" | awk '{printf "%.10f", $0}'

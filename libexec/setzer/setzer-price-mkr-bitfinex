@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -e
+json=$(curl -sS "https://api.bitfinex.com/v2/ticker/tMKRETH")
+mkr_eth=$(jshon <<<"$json" -e 6)
+mkr_eth=$(printf "%.10f" "$mkr_eth")
+eth_usd=$(setzer price eth)
+bc -l <<<"$mkr_eth * $eth_usd" | awk '{printf "%.10f", $0}'
