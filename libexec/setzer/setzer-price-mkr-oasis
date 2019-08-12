@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -e
-json=$(curl -sS "http://api.oasisdex.com/v1/markets/mkr/dai")
+json=$(curl -sS "https://api.oasisdex.com/v2/markets/mkr/dai")
 price=$(jshon <<<"$json" -e data -e price -u)
 echo $price
