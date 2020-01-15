@@ -111,6 +111,8 @@ elif [[ $SETZER_SOURCES == *"rep" ]]; then
   new=$(setzer price rep || echo 0)
 elif [[ $SETZER_SOURCES == *"poly" ]]; then
   new=$(setzer price poly || echo 0)
+elif [[ $SETZER_SOURCES == *"bat" ]]; then
+  new=$(setzer price bat || echo 0)
 else 
   new=$(setzer price eth || echo 0)
 fi
