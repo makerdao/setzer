@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -e
-json=$(curl -sS "https://api.gdax.com/products/ETH-USD/ticker")
+json=$(curl -sS "https://api.pro.coinbase.com/products/BAT-USDC/ticker")
 price=$(jshon <<<"$json" -e price -u)
 echo "$price"

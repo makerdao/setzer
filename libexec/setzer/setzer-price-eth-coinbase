@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+json=$(curl -sS "https://api.pro.coinbase.com/products/ETH-USD/ticker")
+price=$(jshon <<<"$json" -e price -u)
+echo "$price"
