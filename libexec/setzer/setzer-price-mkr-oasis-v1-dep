@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-set -e
-echo "--- WARNING: V1 of the Oasis API is depricated. Please switch to `setzer price mkr-oasis` to use V2 ---"
-json=$(curl -sS "https://api.oasisdex.com/v1/markets/mkr/dai")
-price=$(jshon <<<"$json" -e data -e price -u)
-echo $price
