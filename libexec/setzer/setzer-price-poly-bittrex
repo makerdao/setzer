@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-set -e
-json=$(curl -sS "https://api.bittrex.com/api/v1.1/public/getticker?market=BTC-POLY")
-price=$(jshon <<<"$json" -e result -e Last -u)
-price=$(printf "%.9f" $price)
-#todo replace with 'setzer price btcusd'
-json=$(curl -sS "https://api.coinmarketcap.com/v2/ticker/1/")
-btc=$(jshon <<<"$json" -e data -e quotes -e USD -e price -u)
-bc <<<"$price * $btc" | awk '{printf "%f", $0}'
