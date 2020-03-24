@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -e
 price=$(setzer price rep-cmc)
-! [[ $price =~ ^[+-]?([1-9][0-9]*([.][0-9]+)?|[0][.][0-9]*[1-9]+[0-9]*)$ ]] && exit 1
-echo "$price"
+[[ $price =~ ^[+-]?([1-9][0-9]*([.][0-9]+)?|[0][.][0-9]*[1-9]+[0-9]*)$ ]] && echo "$price" && return 0
+exit 1

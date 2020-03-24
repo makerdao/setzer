@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-set -e
-json=$(curl -sS "https://api.coinpaprika.com/v1/ticker/rep-augur")
-price=$(jshon <<<"$json" -e price_usd -u)
-echo "$price"
