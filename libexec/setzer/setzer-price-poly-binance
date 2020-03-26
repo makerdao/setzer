@@ -2,6 +2,6 @@
 set -e
 json=$(curl -sS "https://www.binance.com/api/v3/ticker/price?symbol=POLYBTC")
 price=$(jshon <<<"$json" -e price -u)
-json=$(curl -sS -H "X-CMC_PRO_API_KEY:  $CMC_API_KEY" -H "Accept: application/json" -d  "id=1" -G https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest)
-btc=$(jshon <<<"$json" -e data -e 1 -e quote -e USD -e price -u)
+json=$(curl -sS "https://api.pro.coinbase.com/products/BTC-USD/ticker")
+btc=$(jshon <<<"$json" -e price -u)
 bc <<<"$price * $btc" | awk '{printf "%f", $0}'
