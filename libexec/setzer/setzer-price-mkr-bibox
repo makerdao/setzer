@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-set -e
-json=$(curl -sS "https://api.bibox.com/v1/mdata?cmd=ticker&pair=MKR_ETH")
-price=$(jshon <<<"$json" -e result -e last_usd -u)
-echo "$price"

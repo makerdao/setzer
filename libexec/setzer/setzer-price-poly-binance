@@ -2,7 +2,6 @@
 set -e
 json=$(curl -sS "https://www.binance.com/api/v3/ticker/price?symbol=POLYBTC")
 price=$(jshon <<<"$json" -e price -u)
-#todo replace with 'setzer price btcusd'
-json=$(curl -sS "https://api.coinmarketcap.com/v2/ticker/1/")
-btc=$(jshon <<<"$json" -e data -e quotes -e USD -e price -u)
+json=$(curl -sS "https://api.pro.coinbase.com/products/BTC-USD/ticker")
+btc=$(jshon <<<"$json" -e price -u)
 bc <<<"$price * $btc" | awk '{printf "%f", $0}'

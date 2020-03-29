@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -e
-json=$(curl -sS "https://api.coinmarketcap.com/v2/ticker/1104/")
-price=$(jshon <<<"$json" -e data -e quotes -e USD -e price -u)
+json=$(curl -sS -H "X-CMC_PRO_API_KEY:  $CMC_API_KEY" -H "Accept: application/json" -d  "id=1104" -G https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest)
+price=$(jshon <<<"$json" -e data -e 1104 -e quote -e USD -e price -u)
 echo "$price"
