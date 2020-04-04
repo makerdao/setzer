@@ -1,5 +1,21 @@
 #!/usr/bin/env bash
 set -e
+
+# Global configuration
+if [[ -e /etc/setzer.conf ]]; then
+	# shellcheck source=/dev/null
+	. "/etc/setzer.conf"
+	#verbose "Imported configuration from /etc/setzer.conf"
+fi
+
+# Local configuration (via -C or --config)
+# Useful for running multiple bots on one box
+if [[ -e $SETZER_CONF ]]; then
+	# shellcheck source=/dev/null
+	. "$SETZER_CONF"
+	#verbose "Imported configuration from $SETZER_CONF"
+fi
+
 json=$(curl -sS -H "X-CMC_PRO_API_KEY:  $CMC_API_KEY" -H "Accept: application/json" -d  "id=1104" -G https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest)
 price=$(jshon <<<"$json" -e data -e 1104 -e quote -e USD -e price -u)
 echo "$price"

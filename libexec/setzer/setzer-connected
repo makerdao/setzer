@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
-timeout=10s
+timeout=${RPC_TIMEOUT:-10s}
 now=$(date +%s)
 timestamp=$(timeout "$timeout" seth block latest timestamp 2>/dev/null || echo 0)
 valid=$(echo "$now" - "$timestamp" | bc)
-[[ $valid -lt 120 ]] || exit 1
+[[ $valid -lt ${LATEST_BLOCK_TIMEOUT:-120} ]] || exit 1
 echo true
