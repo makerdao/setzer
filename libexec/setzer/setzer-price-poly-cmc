@@ -7,6 +7,14 @@ if [[ -e /etc/setzer.conf ]]; then
 	#verbose "Imported configuration from /etc/setzer.conf"
 fi
 
+
+# Global configuration
+if [[ -e /etc/setzer.conf ]]; then
+	# shellcheck source=/dev/null
+	. "/etc/setzer.conf"
+	#verbose "Imported configuration from /etc/setzer.conf"
+fi
+
 set -e
 json=$(curl -sS -H "X-CMC_PRO_API_KEY:  $CMC_API_KEY" -H "Accept: application/json" -d  "id=2496" -G https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest)
 price=$(jshon <<<"$json" -e data -e 2496 -e quote -e USD -e price -u)
