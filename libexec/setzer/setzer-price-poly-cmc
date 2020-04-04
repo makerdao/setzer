@@ -7,12 +7,12 @@ if [[ -e /etc/setzer.conf ]]; then
 	#verbose "Imported configuration from /etc/setzer.conf"
 fi
 
-
-# Global configuration
-if [[ -e /etc/setzer.conf ]]; then
+# Local configuration (via -C or --config)
+# Useful for running multiple bots on one box
+if [[ -e $SETZER_CONF ]]; then
 	# shellcheck source=/dev/null
-	. "/etc/setzer.conf"
-	#verbose "Imported configuration from /etc/setzer.conf"
+	. "$SETZER_CONF"
+	#verbose "Imported configuration from $SETZER_CONF"
 fi
 
 set -e
