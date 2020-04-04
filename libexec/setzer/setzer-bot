@@ -43,10 +43,27 @@ if [[ -e $SETZER_CONF ]]; then
 fi
 
 # check we're connected to ethereum
-while [ "$(setzer connected)" != "true" ]; do
-  log "Not connected to Ethereum, retry in 10 seconds..."
-  sleep 10
+unset ETH_RPC_URL
+while [[ "$(setzer connected)" != "true" ]]; do
+  unset ETH_RPC_URL
+  for port in ${RPC_PORTS:-8545}; do
+    export ETH_RPC_PORT=$port
+    log "Trying on rpc port $ETH_RPC_PORT."
+    [[ "$(setzer connected)" == "true" ]] && ok=true && break
+  done
+  if [[ "$ok" != "true" ]]; then
+                for url in $RPC_URLS; do
+                        export ETH_RPC_URL=$url
+                        log "Trying on rpc url $ETH_RPC_URL"
+                        [[ "$(setzer connected)" == "true" ]] && break && url_ok=true
+                done
+                [[ "$ok" == "true" ]] && unset ETH_RPC_URL
+                [[ "$url_ok" == "true" ]] && ok=true
+  fi
+  [[ "$ok" != "true" ]] && log "Not connected to Ethereum, retry in 10 seconds..." && sleep 10
 done
+[[ -z "$ETH_RPC_URL" ]] && log "Node running on rpc port ${ETH_RPC_PORT:-8545}."
+[[ -n "$ETH_RPC_URL" ]] && log "Node running on rpc url $ETH_RPC_URL."
 
 [[ $ETH_FROM ]] || errors+=("No default account set. Please set it via ETH_FROM ")
 [[ $SETZER_FEED ]] || errors+=("No price feed set. Please set it via SETZER_FEED ")
